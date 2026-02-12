@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**Operation Abandoned** ("Операция Заброшка") — a hardcore browser-based 3D FPS built as a single `index.html` file (~4750 lines). Full spec in `ТЗ.md` (Russian). Target hardware: Nvidia RTX 3000 8GB / 64GB RAM.
+**Operation Abandoned** ("Операция Заброшка") — a hardcore browser-based 3D FPS built as a single `index.html` file (~6290 lines). Full spec in `ТЗ.md` (Russian). Target hardware: Nvidia RTX 3000 8GB / 64GB RAM.
 
 ## Strict Rules
 
@@ -22,44 +22,45 @@ Syntax-check JS without running:
 node -e "const fs=require('fs');const html=fs.readFileSync('index.html','utf8');const m=html.match(/<script>([\s\S]*)<\/script>/);if(m)try{new Function(m[1]);console.log('OK')}catch(e){console.error(e.message)}"
 ```
 
-## Architecture (single `<script>` block, ~4550 lines JS)
+## Architecture (single `<script>` block, ~5050 lines JS)
 
 ### Section Order (match this when adding code)
-1. **CONFIG** (~L211) — constants: `CELL`, `WALL_H`, `MOVE_SPEED`, `BULLET_DMG`, `ENEMY_DMG`, etc.
-2. **MAP** (~L239) — 22x17 grid: 0=empty, 1=wall, 2=crate, 3=enemy, 4=money, 5=car, 6=spawn
-3. **GL INIT** (~L263) — WebGL context, canvas setup, `resize()`
-4. **SHADERS** (~L281) — 4 shader programs compiled and linked:
-   - `worldProg`: textured + lit + fog (walls/floor/crates)
+1. **CONFIG** (~L238) — constants: `CELL`, `WALL_H`, `MOVE_SPEED`, `BULLET_DMG`, `ENEMY_DMG`, etc.
+2. **MAP** (~L265) — 22x17 grid: 0=empty, 1=wall, 2=crate, 3=enemy, 4=money, 5=car, 6=spawn
+3. **GL INIT** (~L290) — WebGL context, canvas setup, `resize()`, early `var _gfxRes` for resolution scaling
+4. **SHADERS** (~L347) — 4 shader programs compiled and linked:
+   - `worldProg`: textured + lit + fog via `uFog` uniform (walls/floor/crates)
    - `billProg`: billboard sprites (unused legacy)
    - `partProg`: point sprites with additive blending (particles)
-   - `entityProg`: 3D colored boxes with model matrix `uM` (enemies, allies, weapons)
-5. **MATH** (~L457) — `perspective()`, `viewMatrix()`, `mat4Mul()`, `mat4T/S/RX/RY/RZ` (column-major Float32Arrays)
-6. **PROCEDURAL TEXTURES** (~L486) — canvas-generated, power-of-two dimensions (64/128)
-7. **LEVEL GEOMETRY** (~L584) — VBOs built from MAP grid; `pushQuad()` = 6 verts per face; `cubeVBO` unit cube at L652
-8. **COLLISION & RAGDOLL** (~L679) — `isWall()`, `collide()`, `lineOfSight()` (grid raymarching), 14-particle Verlet ragdoll with 21 constraints, `boneMat()`, `createRagdoll()`
-9. **SOUND** (~L844) — Web Audio procedural synthesis `playSound()`, SpeechSynthesis `playVoice()` with 6s cooldown
-10. **PARTICLES** (~L951) — `spawnParticles()`, `spawnDirectionalBlood()`, giblets, grenades, `updateParticles()`
-11. **GAME STATE** (~L1183) — variables, `WEAPONS[]` array (L1205), `ALLY_DEFS[]` (L1259), init functions:
-    - `initGame()` (L1286), `initJuggernaut()` (L1330), `initMathMode()` (L1381), `initZombieMode()` (L1437)
-    - `spawnBarrels()` (L1477), `spawnDoors()` (L1489), `addXP()` (L1511)
-12. **PLAYER UPDATE** (~L1522) — `updatePlayer(dt)`: movement, collision, shooting, reload, F/G interaction, doors, objectives
-13. **SHOOTING** (~L1869) — `playerShoot()`, `singleRaycast()` with head/body hitboxes, `explodeBarrel()` (L2147)
-14. **ENEMY AI** (~L2206) — `updateEnemies(dt)`: state machine `idle→combat→hurt→dead→blinded→captured`
-15. **ALLY AI** (~L2370) — `updateAllies(dt)`: medics heal, defenders fight, dumb wanders; `allyShoot()` (L2568)
-16. **RENDER** (~L2670):
-    - `drawWorld()` (L2713) — walls, floor, ceiling, crates, cars, barrels, doors
-    - `drawEnemies()` (L2740) — enemy/zombie/ally bodies (~20 boxes each), zombie-specific appearance
-    - `drawParticles()` (L3117), `resetAttribs()` (L3148)
-    - `drawWeapon3D()` (L3154) — 4 weapon models: rifle, shotgun, pistol, sniper + muzzle flash
-    - `drawMinigun()` (L3501), `drawMenuCharacter()` (L3570)
-    - `drawGiblets()` (L3635), `drawBloodPools()` (L3663), `drawBloodDecals()` (L3694)
-    - `render()` (L3745) — orchestrates all draw calls
-17. **MINIMAP** (~L3886) — 2D canvas minimap with enemies, allies, barrels, doors
-18. **HUD** (~L4041) — `updateHUD()`: HP, ammo, objectives, scope overlay (L4294), bodycam overlay, mission prompts
-19. **INPUT** (~L4366) — keydown/keyup/mouse/contextmenu event listeners
-20. **GAME CONTROL** (~L4390) — `game` object: `start()`, `startJuggernaut()`, `startMath()`, `startZombie()`, `restart()`, `toMenu()`; shop/trade functions (L4466)
-21. **SCREEN EFFECTS** (~L4580) — `drawRain()`, `drawFlashlight()`
-22. **MAIN LOOP** (~L4654) — `frame()`: updatePlayer→updateEnemies→updateAllies→updateParticles→render→HUD
+   - `entityProg`: 3D colored boxes with model matrix `uM`, `uFog`, `uAO` uniforms (enemies, allies, weapons)
+5. **MATH** (~L491) — `perspective()`, `viewMatrix()`, `mat4Mul()`, `mat4T/S/RX/RY/RZ` (column-major Float32Arrays)
+6. **PROCEDURAL TEXTURES** (~L520) — canvas-generated, power-of-two dimensions (64/128)
+7. **LEVEL GEOMETRY** (~L618) — VBOs built from MAP grid; `pushQuad()` = 6 verts per face; `cubeVBO` unit cube
+8. **COLLISION & RAGDOLL** (~L713) — `isWall()`, `collide()`, `lineOfSight()` (grid raymarching), 14-particle Verlet ragdoll with 21 constraints, `boneMat()`, `createRagdoll()`
+9. **SOUND** (~L878) — Web Audio procedural synthesis `playSound()`, SpeechSynthesis `playVoice()` with 6s cooldown
+10. **PARTICLES** (~L985) — `spawnParticles()`, `spawnDirectionalBlood()`, giblets, grenades, `updateParticles()`
+11. **GAME STATE** (~L1217) — variables, `WEAPONS[]` array (L1242), graphics settings (`gfx*` vars, L1267), init functions:
+    - `initGame()` (L1419), `initJuggernaut()` (L1463), `initMathMode()` (L1514), `initZombieMode()` (L1570), `initBossMode()` (L1610)
+    - `spawnBarrels()`, `spawnDoors()`, `addXP()`
+12. **PLAYER UPDATE** (~L1674) — `updatePlayer(dt)`: movement, collision, shooting, reload, F/G interaction, doors, objectives
+13. **SHOOTING** (~L2022) — `playerShoot()`, `singleRaycast()` with head/body hitboxes, boss damage resistance, glitch weapon conversion, `explodeBarrel()`
+14. **ENEMY AI** (~L2412) — `updateEnemies(dt)`: state machine `idle→combat→hurt→dead→blinded→captured`, boss charge AI, glitched enemy ally AI
+15. **ALLY AI** (~L2631) — `updateAllies(dt)`: medics heal, defenders fight, dumb wanders; `allyShoot()`
+16. **RENDER** (~L2974):
+    - `drawWorld()` — walls, floor, ceiling, crates, cars, barrels, doors
+    - `drawEnemies()` — enemy/zombie/ally/boss bodies (~20 boxes each), zombie/boss-specific appearance
+    - `drawParticles()`, `resetAttribs()`
+    - `drawWeapon3D()` — 5 weapon models: rifle, shotgun, pistol, sniper, glitch gun + muzzle flash
+    - `drawMinigun()`, `drawMenuCharacter()`
+    - `drawGiblets()`, `drawBloodPools()`, `drawBloodDecals()`
+    - `drawPlayerSkeleton()` — 3rd person skeleton player model (cheat mode)
+    - `render()` — orchestrates all draw calls, 3rd person camera support
+17. **MINIMAP** (~L4334) — 2D canvas minimap with enemies, allies, barrels, doors, boss
+18. **HUD** (~L4429) — `updateHUD()`: HP, ammo, objectives, scope overlay, bodycam overlay, mission prompts
+19. **INPUT** (~L4818) — keydown/keyup/mouse/contextmenu event listeners
+20. **GAME CONTROL** (~L4842) — `game` object: `start()`, `startJuggernaut()`, `startMath()`, `startZombie()`, `restart()`, `toMenu()`; shop/trade functions; cheat code system (`activateCheat()`)
+21. **SCREEN EFFECTS** (~L5100) — `drawRain()`, `drawFlashlight()`
+22. **MAIN LOOP** (~L5172) — `frame()`: updatePlayer→updateEnemies→updateAllies→updateParticles→render→HUD
 
 ### Entity Rendering Pattern (entityProg)
 All 3D characters (enemies, allies, first-person weapon) use the same unit cube VBO with a `box(matrix, sx,sy,sz, r,g,b)` helper. Body parts are composed via matrix multiplication chains:
@@ -69,7 +70,7 @@ limb  = baseM * T(pivot) * RX(swing) * T(offset) * S(size)
 ```
 
 ### Weapon System
-`WEAPONS[]` array (index 0-4): assault rifle, shotgun, pistol, sniper, minigun. Each has: `name`, `dmg`, `mag`, `reserve`, `firerate`, `reload`, `spread`. `currentWeapon` selects active weapon. `player._weaponAmmo[]` / `player._weaponReserve[]` persist ammo across switches. `drawWeapon3D()` renders unique 3D models per weapon.
+`WEAPONS[]` array (index 0-4): assault rifle, shotgun, pistol, sniper, glitch gun. Each has: `name`, `dmg`, `mag`, `reserve`, `firerate`, `reload`, `spread`. Glitch gun (index 4) has `glitch:true` flag — converts killed enemies into allies. `currentWeapon` selects active weapon. `player._weaponAmmo[]` / `player._weaponReserve[]` persist ammo across switches (5 slots). `drawWeapon3D()` renders unique 3D models per weapon.
 
 ### Enemy States
 - `idle` — patrols, transitions to `combat` on line-of-sight
@@ -84,9 +85,27 @@ limb  = baseM * T(pivot) * RX(swing) * T(offset) * S(size)
 - `'juggernaut'` — endless waves, 500HP, minigun, unlocked after first win
 - `'math'` — multiplication quiz: find+kill enemy with correct answer, 60s timer
 - `'zombie'` — wave-based survival, melee zombies (green skin, no weapons, reaching pose)
+- `'boss'` — cheat-activated: fight "Чёрная Ошибка" (2000HP black glitch boss), rewards glitch weapon
+- `'battleroyale'` — shrinking zone, 15 enemies, zone damages player outside, win=kill all
+- `'wavedefense'` — defend point for 5 waves, point has 100HP, enemies attack point
+- `'infection'` — 2 zombies + 8 humans, zombies infect on contact, survive 90s to win
+
+### Graphics Settings System
+4 presets (low/medium/high/ultra) with individual slider overrides. Two categories:
+- **Performance**: `gfxResScale` (resolution), `gfxMaxParticles`, `gfxFogDist` (shader uniform `uFog`), `gfxShadows` (shader uniform `uAO`), `gfxDecalCap`, `gfxGibletCap`
+- **Visual**: `gfxBrightness`/`gfxContrast`/`gfxSaturation` (CSS `filter` on canvas), `gfxVignette` (overlay div opacity)
+
+Key functions: `applyGfxPreset()`, `resizeGfx()`, `applyGfxVisuals()`, `updateGfxUI()`
+
+### Cheat Code System
+`activateCheat(code)` — 4 codes entered in settings screen input field (case-insensitive):
+- `BLOOD A NOT 5 YERS OLD A 18 YERS OLD` — unlock gore (shows confirmation dialog)
+- `free pls 150` — +150 coins
+- `skelet with black gun plssss` — skeleton mode + 3rd person camera
+- `black world spawn` — teleport to boss arena fight
 
 ### Gore System
-Directional blood spray, blood→decal conversion, persistent floor/wall decals (cap 150), blood pools under dead bodies, giblets (tumbling chunks with Verlet), screen blood droplets, dismemberment flags (`headGone`/`armLGone`/etc.), screen shake.
+Hidden behind cheat code. Directional blood spray, blood→decal conversion, persistent floor/wall decals, blood pools under dead bodies, giblets (tumbling chunks with Verlet), screen blood droplets, dismemberment flags (`headGone`/`armLGone`/etc.), screen shake.
 
 ## Key Technical Gotchas
 
@@ -101,6 +120,10 @@ Directional blood spray, blood→decal conversion, persistent floor/wall decals 
 - **boneMat column-major** — WebGL expects `[rx,ry,rz,0, ux,uy,uz,0, fx,fy,fz,0, tx,ty,tz,1]`
 - **Bullet time** — `gameDt=dt*0.3` for enemies/physics, player always uses real `dt`
 - **Zombie flag** — enemies with `e._zombie=true` render differently (green skin, no weapon, reaching pose) and use melee instead of shooting
+- **TDZ with `gfxResScale`** — `resize()` is called at ~L297, before `let gfxResScale` at ~L1268. Use `var _gfxRes=1.0` (declared at ~L286) in `resize()`, synced via `resizeGfx()`
+- **Fog/AO uniforms** — `uFog` and `uAO` must be set every time `worldProg` or `entityProg` is used (many locations). Missing uniform = stale value from previous draw call
+- **Boss damage resistance** — in `singleRaycast()`: body damage ×0.5, headshot capped at 150, hurt timer 0.1s
+- **Glitched enemies** — `e._glitched=true` + `e._isAlly=true` makes them fight other enemies; must check `_glitched` in enemy AI to avoid targeting allies
 
 ## Controls
 
@@ -118,13 +141,20 @@ Directional blood spray, blood→decal conversion, persistent floor/wall decals 
 | F | Interact (loot, heal ally, doors, defuse) |
 | G | Capture (bag then cuffs on enemy) |
 | H | Use medkit |
-| 1-4 | Weapon switch (rifle/shotgun/pistol/sniper) |
+| 1-6 | Weapon switch (rifle/shotgun/pistol/sniper/glitch/gravgun) |
 | T | Throw grenade |
 | Z | Bullet time |
 | N | Night vision toggle |
 | L | Flashlight toggle |
+| V | Drone toggle (fly with WASD) |
+| C | Place mine |
+| B | Stealth kill (behind enemy) |
+| M | Akimbo toggle (dual pistols) |
+| X (hold) | Command wheel for allies |
+| Tab | Camera view toggle |
+| Shift+Ctrl | Slide (while sprinting) |
 
 ## Persistent State (survives between missions)
-`playerCoins`, `playerMedkits`, `weaponBonus`, `armorBonus`, `lootCount`, `playerBags`, `playerCuffs`, `jugUnlocked`, `playerXP`, `playerLevel`, `hasShotgun`, `hasPistol`, `hasSniper`, `hasShield`, `hasBulletTime`, `hasNightVision`, `hasFlashlight`, `goldSkin`
+`playerCoins`, `playerMedkits`, `weaponBonus`, `armorBonus`, `lootCount`, `playerBags`, `playerCuffs`, `jugUnlocked`, `playerXP`, `playerLevel`, `hasShotgun`, `hasPistol`, `hasSniper`, `hasShield`, `hasBulletTime`, `hasNightVision`, `hasFlashlight`, `goldSkin`, `hasGlitchWeapon`, `bossDefeated`, `skeletonMode`, `thirdPersonCam`, `goreEnabled`, `hasAkimbo`, `hasEquipHelmet`, `hasEquipVest`, `hasEquipKnees`, `playerMines`
 
 Reset per mission in `initGame()`: `capturedEnemy`, `evacTimer`, `particles`, `helmetCracks`, `allies`, `enemies`, `barrels`, `doors`, `grenades`
