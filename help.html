@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Операция "Заброшка" — Помощь</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:#0a0a0a;color:#ccc;font-family:'Segoe UI',Arial,sans-serif;line-height:1.7;padding:0}
+
+/* Sidebar */
+#sidebar{position:fixed;top:0;left:0;width:260px;height:100%;background:#0d0d0d;border-right:1px solid #1a1a1a;overflow-y:auto;z-index:100;padding:20px 0}
+#sidebar::-webkit-scrollbar{width:4px}
+#sidebar::-webkit-scrollbar-thumb{background:#333;border-radius:2px}
+#sidebar h2{color:#0f0;font-size:14px;padding:0 20px;margin:16px 0 8px;letter-spacing:2px;text-transform:uppercase;text-shadow:0 0 8px rgba(0,255,0,.3)}
+#sidebar a{display:block;padding:6px 20px 6px 28px;color:#888;font-size:13px;text-decoration:none;transition:all .2s;border-left:2px solid transparent}
+#sidebar a:hover{color:#0f0;background:rgba(0,255,0,.05);border-left-color:#0f0}
+#sidebar a.active{color:#0f0;border-left-color:#0f0}
+#sidebar .logo{padding:16px 20px 20px;border-bottom:1px solid #1a1a1a;margin-bottom:8px}
+#sidebar .logo h1{color:#f44;font-size:18px;text-shadow:0 0 15px rgba(255,50,50,.4);letter-spacing:2px}
+#sidebar .logo p{color:#666;font-size:11px;margin-top:4px}
+
+/* Main */
+main{margin-left:260px;padding:40px 60px 80px;max-width:900px}
+h1{color:#f44;font-size:36px;text-shadow:0 0 20px rgba(255,50,50,.3);margin-bottom:8px;letter-spacing:2px}
+h2{color:#0f0;font-size:24px;margin:50px 0 16px;padding-bottom:8px;border-bottom:1px solid #1a2a1a;text-shadow:0 0 10px rgba(0,255,0,.2);letter-spacing:1px}
+h3{color:#0ff;font-size:18px;margin:30px 0 12px;text-shadow:0 0 6px rgba(0,255,255,.2)}
+h4{color:#fa0;font-size:15px;margin:20px 0 8px}
+p{margin:8px 0;color:#bbb}
+strong{color:#ddd}
+em{color:#999;font-style:normal}
+
+/* Lists */
+ul,ol{margin:8px 0 8px 24px}
+li{margin:4px 0;color:#bbb}
+li strong{color:#ddd}
+
+/* Tables */
+table{width:100%;border-collapse:collapse;margin:12px 0 20px;font-size:14px}
+th{background:#151515;color:#0f0;text-align:left;padding:10px 14px;border:1px solid #222;font-size:13px;letter-spacing:1px;text-transform:uppercase}
+td{padding:8px 14px;border:1px solid #1a1a1a;color:#bbb}
+tr:nth-child(even){background:rgba(255,255,255,.02)}
+tr:hover{background:rgba(0,255,0,.03)}
+
+/* Key styling */
+kbd{display:inline-block;padding:2px 8px;background:#1a1a1a;border:1px solid #333;border-radius:4px;color:#0f0;font-family:'Courier New',monospace;font-size:13px;box-shadow:0 1px 2px rgba(0,0,0,.3);margin:0 2px;white-space:nowrap}
+
+/* Tip boxes */
+.tip{background:rgba(0,60,0,.2);border:1px solid rgba(0,255,0,.15);border-left:3px solid #0f0;padding:12px 16px;margin:16px 0;border-radius:0 6px 6px 0;font-size:14px}
+.tip::before{content:'СОВЕТ';display:block;color:#0f0;font-size:11px;font-weight:bold;letter-spacing:2px;margin-bottom:4px}
+.warn{background:rgba(60,30,0,.2);border:1px solid rgba(255,170,0,.15);border-left:3px solid #fa0;padding:12px 16px;margin:16px 0;border-radius:0 6px 6px 0;font-size:14px}
+.warn::before{content:'ВНИМАНИЕ';display:block;color:#fa0;font-size:11px;font-weight:bold;letter-spacing:2px;margin-bottom:4px}
+.secret{background:rgba(40,0,40,.2);border:1px solid rgba(200,0,255,.15);border-left:3px solid #c0f;padding:12px 16px;margin:16px 0;border-radius:0 6px 6px 0;font-size:14px}
+.secret::before{content:'СЕКРЕТ';display:block;color:#c0f;font-size:11px;font-weight:bold;letter-spacing:2px;margin-bottom:4px}
+
+/* Weapon cards */
+.weapon-card{background:#111;border:1px solid #222;border-radius:8px;padding:16px 20px;margin:12px 0;transition:border-color .2s}
+.weapon-card:hover{border-color:#0f0}
+.weapon-card h4{margin:0 0 8px;color:#0f0}
+.weapon-card .stats{display:flex;flex-wrap:wrap;gap:16px;margin-top:8px}
+.weapon-card .stat{font-size:13px;color:#888}
+.weapon-card .stat span{color:#0ff;font-family:'Courier New',monospace;font-weight:bold}
+
+/* Mode cards */
+.mode-card{background:linear-gradient(135deg,#111 0%,#0a0a0a 100%);border:1px solid #222;border-radius:8px;padding:20px;margin:12px 0}
+.mode-card h4{margin:0 0 6px}
+
+/* Back button */
+.back-btn{display:inline-block;margin:20px 0;padding:10px 30px;background:transparent;border:2px solid #0f0;color:#0f0;font-size:15px;text-decoration:none;text-transform:uppercase;letter-spacing:2px;border-radius:4px;transition:all .3s}
+.back-btn:hover{background:#0f0;color:#000;box-shadow:0 0 20px rgba(0,255,0,.3)}
+
+/* Scrollbar */
+main::-webkit-scrollbar{width:6px}
+main::-webkit-scrollbar-thumb{background:#222;border-radius:3px}
+
+/* Responsive */
+@media(max-width:800px){
+  #sidebar{display:none}
+  main{margin-left:0;padding:20px}
+}
+</style>
+</head>
+<body>
+
+<div id="sidebar">
+  <div class="logo">
+    <h1>ЗАБРОШКА</h1>
+    <p>Руководство игрока</p>
+  </div>
+  <h2>Начало</h2>
+  <a href="#start">Как начать</a>
+  <a href="#modes">Игровые режимы</a>
+  <h2>Управление</h2>
+  <a href="#movement">Передвижение</a>
+  <a href="#combat">Бой</a>
+  <a href="#abilities">Способности</a>
+  <a href="#interaction">Взаимодействие</a>
+  <a href="#parkour">Паркур</a>
+  <h2>Оружие</h2>
+  <a href="#weapons">Арсенал</a>
+  <a href="#reload">Перезарядка</a>
+  <a href="#akimbo">Акимбо</a>
+  <h2>Боевая система</h2>
+  <a href="#damage">Зоны урона</a>
+  <a href="#wounds">Система ран</a>
+  <a href="#healing">Лечение</a>
+  <a href="#equipment">Снаряжение</a>
+  <h2>Враги</h2>
+  <a href="#enemy-ai">ИИ врагов</a>
+  <a href="#capture">Захват врагов</a>
+  <a href="#zombies">Зомби</a>
+  <a href="#boss">Босс</a>
+  <h2>Союзники</h2>
+  <a href="#allies">Команда</a>
+  <a href="#commands">Команды</a>
+  <h2>Техника</h2>
+  <a href="#vehicle">Машина</a>
+  <a href="#drone">Дрон</a>
+  <a href="#mines">Мины</a>
+  <a href="#cameras">Камеры</a>
+  <a href="#gravgun">Грав-пушка</a>
+  <h2>Экономика</h2>
+  <a href="#shop">Магазин</a>
+  <a href="#trade">Торговля</a>
+  <h2>Настройки</h2>
+  <a href="#graphics">Графика</a>
+  <a href="#effects">Эффекты</a>
+  <a href="#weather">Погода</a>
+  <h2>Дополнительно</h2>
+  <a href="#editor">Редактор карт</a>
+  <a href="#cheats">Чит-коды</a>
+  <a href="#hud">Интерфейс (HUD)</a>
+  <a href="#tips">Советы</a>
+</div>
+
+<main>
+
+<h1>ОПЕРАЦИЯ "ЗАБРОШКА"</h1>
+<p style="color:#888;font-size:18px;margin-bottom:30px">Operation Abandoned — Полное руководство игрока</p>
+
+<a class="back-btn" href="index.html">Вернуться в игру</a>
+
+<!-- ===== НАЧАЛО ===== -->
+<h2 id="start">Как начать игру</h2>
+<p>Откройте файл <strong>index.html</strong> в браузере Google Chrome. Никакой установки не требуется.</p>
+<ol>
+  <li>Откроется <strong>главное меню</strong> с названием игры.</li>
+  <li>Нажмите <strong>"НАЧАТЬ МИССИЮ"</strong> для запуска основного режима.</li>
+  <li>Кликните на экран — курсор мыши будет захвачен (Pointer Lock). Это нужно для управления камерой.</li>
+  <li>Для выхода из захвата мыши нажмите <kbd>Esc</kbd>.</li>
+</ol>
+<div class="tip">Перед первой миссией загляните в <strong>Магазин</strong> — даже с 0 монет можно ознакомиться с ассортиментом. Монеты зарабатываются в миссиях.</div>
+
+<!-- ===== РЕЖИМЫ ===== -->
+<h2 id="modes">Игровые режимы</h2>
+<p>В игре <strong>8 режимов</strong>. Все запускаются из главного меню.</p>
+
+<div class="mode-card">
+  <h4 style="color:#0f0">Основная миссия (Normal)</h4>
+  <p>Убейте всех солдат, соберите деньги клавишей <kbd>F</kbd>. После выполнения задач запускается <strong>таймер 45 секунд</strong> — нужно добежать до машины и нажать <kbd>F</kbd>. Победа = +40 монет. Если не успеете — приедет бригада зачистки (волны по 10→20→30→40 врагов).</p>
+</div>
+
+<div class="mode-card">
+  <h4 style="color:#fa0">Джаггернаут</h4>
+  <p>Разблокируется после первой победы в основном режиме. У вас <strong>500 HP</strong> и <strong>миниган</strong>. Бесконечные волны врагов, счётчик убийств. Сколько продержитесь?</p>
+</div>
+
+<div class="mode-card">
+  <h4 style="color:#0ff">Таблица умножения (Math)</h4>
+  <p>На экране появляется пример (например, 7 &times; 8). Над врагами — числа-ответы. Найдите и убейте врага с <strong>правильным ответом</strong>. Таймер 60 сек на вопрос. +20 монет за правильный ответ (×2 с апгрейдом из магазина).</p>
+</div>
+
+<div class="mode-card">
+  <h4 style="color:#a44">Зомби-волны (Zombie)</h4>
+  <p>Волны зомби — зелёная кожа, без оружия, <strong>атакуют вблизи</strong> (~15 урона при контакте). ~6 волн с нарастающей сложностью. Держите дистанцию!</p>
+</div>
+
+<div class="mode-card">
+  <h4 style="color:#f0a">Королевская битва (Battle Royale)</h4>
+  <p>15 врагов на карте. <strong>Зона сужается</strong> — вне зоны получаете урон. Убейте всех, чтобы победить. Следите за миникартой (белый круг = безопасная зона).</p>
+</div>
+
+<div class="mode-card">
+  <h4 style="color:#0af">Волна обороны (Wave Defense)</h4>
+  <p>Защищайте <strong>центральную точку</strong> (100 HP) в течение 5 волн. Враги идут к точке и атакуют её. Если HP точки упадёт до 0 — проигрыш.</p>
+</div>
+
+<div class="mode-card">
+  <h4 style="color:#4a0">Заражение (Infection)</h4>
+  <p>Старт: 2 зомби + 8 людей. Зомби <strong>заражают при контакте</strong> — люди превращаются в зомби. Выживите <strong>90 секунд</strong> = победа.</p>
+</div>
+
+<div class="mode-card">
+  <h4 style="color:#c0f">Босс (секретный)</h4>
+  <p>Активируется <strong>чит-кодом</strong>. Бой с боссом "Чёрная Ошибка" (2000 HP). Победа награждает Глитч-пушкой.</p>
+</div>
+
+<!-- ===== ПЕРЕДВИЖЕНИЕ ===== -->
+<h2 id="movement">Передвижение</h2>
+<table>
+  <tr><th>Клавиша</th><th>Действие</th><th>Детали</th></tr>
+  <tr><td><kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd></td><td>Ходьба</td><td>Базовая скорость 7 ед/сек</td></tr>
+  <tr><td><kbd>Shift</kbd></td><td>Спринт</td><td>×1.6 к скорости. Расходует стамину (25/сек). Стамина восстанавливается (15/сек)</td></tr>
+  <tr><td><kbd>Пробел</kbd></td><td>Прыжок</td><td>Только стоя на земле</td></tr>
+  <tr><td><kbd>Ctrl</kbd></td><td>Присесть</td><td>Переключатель. Скорость ×0.45, меньший хитбокс</td></tr>
+  <tr><td><kbd>Q</kbd></td><td>Наклон влево</td><td>Камера смещается на 0.45 + лёгкий крен</td></tr>
+  <tr><td><kbd>E</kbd></td><td>Наклон вправо</td><td>Камера смещается на 0.45 + лёгкий крен</td></tr>
+  <tr><td><kbd>Мышь</kbd></td><td>Обзор</td><td>Pointer Lock — курсор захвачен. Esc для выхода</td></tr>
+</table>
+
+<h3 id="parkour">Паркур</h3>
+<h4>Бег по стене</h4>
+<p>Прыгните рядом со стеной и зажмите <kbd>W</kbd>. Персонаж побежит вдоль стены в течение <strong>0.8 сек</strong>, после чего оттолкнётся.</p>
+
+<h4>Подкат (слайд)</h4>
+<p>Во время спринта (<kbd>Shift</kbd>) нажмите <kbd>Ctrl</kbd>. Персонаж проскользнёт вперёд в течение <strong>0.6 сек</strong>, уходя в присед.</p>
+
+<div class="tip">Подкат полезен для ухода от огня — ваш хитбокс становится ниже, и враги чаще промахиваются.</div>
+
+<!-- ===== БОЙ ===== -->
+<h2 id="combat">Боевые действия</h2>
+<table>
+  <tr><th>Клавиша</th><th>Действие</th><th>Детали</th></tr>
+  <tr><td><kbd>ЛКМ</kbd></td><td>Стрельба</td><td>Автоматическая (удерживать для очереди)</td></tr>
+  <tr><td><kbd>ПКМ</kbd></td><td>Прицел (ADS)</td><td>Удерживать. Оптический прицел, ×0.25 чувствительность мыши</td></tr>
+  <tr><td><kbd>R</kbd></td><td>Перезарядка</td><td>4-фазная анимация. Нельзя стрелять во время перезарядки</td></tr>
+  <tr><td><kbd>1</kbd>–<kbd>6</kbd></td><td>Смена оружия</td><td>1=Автомат, 2=Дробовик, 3=Пистолет, 4=Снайперка, 5=Глитч, 6=Грав</td></tr>
+  <tr><td><kbd>T</kbd></td><td>Граната</td><td>Бросить гранату (если есть). Кулдаун 0.5 сек</td></tr>
+  <tr><td><kbd>B</kbd></td><td>Тихое убийство</td><td>Сзади врага, дистанция &lt;2м. Мгновенно, бесшумно. Кулдаун 2 сек</td></tr>
+</table>
+
+<h2 id="abilities">Специальные способности</h2>
+<p>Покупаются в <strong>Магазине</strong>. После покупки остаются навсегда.</p>
+<table>
+  <tr><th>Клавиша</th><th>Способность</th><th>Описание</th></tr>
+  <tr><td><kbd>Z</kbd></td><td>Замедление времени</td><td>3 секунды. Враги двигаются в ×0.3 скорости, вы — нормально. Полоса энергии внизу</td></tr>
+  <tr><td><kbd>N</kbd></td><td>Ночное зрение</td><td>Зелёный фильтр, видно в темноте</td></tr>
+  <tr><td><kbd>L</kbd></td><td>Фонарик</td><td>Конус света от камеры</td></tr>
+  <tr><td><kbd>V</kbd></td><td>Дрон</td><td>Вид сверху, WASD полёт, 10 сек батарея. Отмечает врагов на миникарте</td></tr>
+  <tr><td><kbd>C</kbd></td><td>Мина</td><td>Ставит мину на пол. 1.5 сек до активации, 120 урона. Макс 5 мин</td></tr>
+  <tr><td><kbd>M</kbd></td><td>Акимбо</td><td>Двойные пистолеты: ×2 скорость стрельбы, ×1.5 разброс, без прицела</td></tr>
+</table>
+
+<h2 id="interaction">Взаимодействие</h2>
+<p>Клавиша <kbd>F</kbd> — универсальная кнопка взаимодействия:</p>
+<ul>
+  <li><strong>Деньги на земле</strong> — подобрать (приближение + F)</li>
+  <li><strong>Труп врага</strong> — обыскать, получить лут</li>
+  <li><strong>Дверь</strong> — открыть/закрыть</li>
+  <li><strong>Раненый союзник</strong> — вылечить (тратит 1 аптечку)</li>
+  <li><strong>Машина</strong> — сесть за руль / выйти</li>
+  <li><strong>Бомба</strong> — обезвредить (в режиме Defuse)</li>
+</ul>
+
+<!-- ===== ОРУЖИЕ ===== -->
+<h2 id="weapons">Арсенал</h2>
+<p>В игре <strong>6 видов оружия</strong>. Переключение клавишами <kbd>1</kbd>–<kbd>6</kbd>. Оружие 2–6 нужно купить в магазине или получить как награду.</p>
+
+<div class="weapon-card">
+  <h4>[1] Автомат (Assault Rifle)</h4>
+  <p>Стандартное оружие. Баланс между уроном, скорострельностью и точностью. Всегда доступен.</p>
+  <div class="stats">
+    <div class="stat">Магазин: <span>30</span></div>
+    <div class="stat">Запас: <span>90</span></div>
+    <div class="stat">Урон: <span>35</span></div>
+    <div class="stat">Темп: <span>0.12 сек</span></div>
+    <div class="stat">Перезарядка: <span>1.8 сек</span></div>
+    <div class="stat">Разброс: <span>0.02</span></div>
+  </div>
+</div>
+
+<div class="weapon-card">
+  <h4>[2] Дробовик (Shotgun) — 30 монет</h4>
+  <p>Стреляет <strong>8 дробинами</strong> одновременно. Смертелен вблизи, бесполезен на дальних дистанциях.</p>
+  <div class="stats">
+    <div class="stat">Магазин: <span>6</span></div>
+    <div class="stat">Запас: <span>30</span></div>
+    <div class="stat">Урон: <span>15 &times; 8</span></div>
+    <div class="stat">Темп: <span>0.8 сек</span></div>
+    <div class="stat">Перезарядка: <span>2.5 сек</span></div>
+    <div class="stat">Разброс: <span>0.12</span></div>
+  </div>
+</div>
+
+<div class="weapon-card">
+  <h4>[3] Пистолет (Pistol) — 10 монет</h4>
+  <p>Быстрый и лёгкий. <strong>Бесконечный запас</strong> патронов — никогда не останетесь без оружия.</p>
+  <div class="stats">
+    <div class="stat">Магазин: <span>12</span></div>
+    <div class="stat">Запас: <span>&infin;</span></div>
+    <div class="stat">Урон: <span>20</span></div>
+    <div class="stat">Темп: <span>0.18 сек</span></div>
+    <div class="stat">Перезарядка: <span>1.0 сек</span></div>
+    <div class="stat">Разброс: <span>0.03</span></div>
+  </div>
+</div>
+
+<div class="weapon-card">
+  <h4>[4] Снайперская винтовка (Sniper) — 40 монет</h4>
+  <p><strong>200 урона</strong> за выстрел. Мощнейшее оружие для дальнего боя. Прицел с увеличением ×0.2.</p>
+  <div class="stats">
+    <div class="stat">Магазин: <span>5</span></div>
+    <div class="stat">Запас: <span>25</span></div>
+    <div class="stat">Урон: <span>200</span></div>
+    <div class="stat">Темп: <span>1.2 сек</span></div>
+    <div class="stat">Перезарядка: <span>2.8 сек</span></div>
+    <div class="stat">Разброс: <span>0</span></div>
+  </div>
+</div>
+
+<div class="weapon-card">
+  <h4>[5] Глитч-пушка (Glitch Gun) — 500 монет</h4>
+  <p>Доступна после победы над боссом. Убитые враги <strong>превращаются в союзников</strong> и сражаются за вас!</p>
+  <div class="stats">
+    <div class="stat">Магазин: <span>20</span></div>
+    <div class="stat">Запас: <span>100</span></div>
+    <div class="stat">Урон: <span>45</span></div>
+    <div class="stat">Темп: <span>0.2 сек</span></div>
+    <div class="stat">Перезарядка: <span>1.5 сек</span></div>
+    <div class="stat">Разброс: <span>0.03</span></div>
+  </div>
+</div>
+
+<div class="weapon-card">
+  <h4>[6] Гравитационная пушка (Gravity Gun) — 35 монет</h4>
+  <p>Не стреляет пулями. <kbd>ПКМ</kbd> — захватить бочку или мёртвое тело. <kbd>ЛКМ</kbd> — швырнуть объект во врагов.</p>
+  <div class="stats">
+    <div class="stat">Дальность захвата: <span>6м (бочки) / 5м (тела)</span></div>
+    <div class="stat">Без патронов</div>
+  </div>
+</div>
+
+<h3 id="reload">Перезарядка</h3>
+<p>Нажмите <kbd>R</kbd> для перезарядки. Анимация состоит из <strong>4 фаз</strong>:</p>
+<ol>
+  <li><strong>Наклон оружия</strong> — оружие отклоняется в сторону.</li>
+  <li><strong>Магазин выпадает</strong> — старый магазин отделяется.</li>
+  <li><strong>Новый магазин</strong> — вставляется свежий магазин.</li>
+  <li><strong>Возврат</strong> — оружие возвращается в боевое положение.</li>
+</ol>
+<div class="warn">Во время перезарядки вы <strong>не можете стрелять</strong>. Выбирайте безопасный момент!</div>
+
+<h3 id="akimbo">Акимбо (двойные пистолеты)</h3>
+<p>Купите "Двойн. Пистолет" в магазине (25 монет). Нажмите <kbd>M</kbd> для переключения.</p>
+<ul>
+  <li>Скорость стрельбы ×2 (оба пистолета стреляют поочерёдно).</li>
+  <li>Разброс ×1.5 — менее точно, но больше пуль.</li>
+  <li>Прицел (ADS) <strong>отключён</strong> — стрельба только от бедра.</li>
+</ul>
+
+<!-- ===== БОЕВАЯ СИСТЕМА ===== -->
+<h2 id="damage">Зоны урона</h2>
+<p>Попадания по <strong>разным частям тела</strong> дают разный эффект:</p>
+<table>
+  <tr><th>Зона</th><th>Урон</th><th>Доп. эффект</th></tr>
+  <tr><td><strong>Голова</strong></td><td>300 (мгновенная смерть)</td><td>Текст "HEADSHOT", +25 XP</td></tr>
+  <tr><td><strong>Тело</strong></td><td>Стандартный</td><td>Шанс 40% — кровотечение</td></tr>
+  <tr><td><strong>Рука</strong></td><td>Стандартный</td><td>Тряска оружия (×2.5 разброс, 6 сек)</td></tr>
+  <tr><td><strong>Нога</strong></td><td>Стандартный</td><td>Хромота (−40% скорости, 8 сек)</td></tr>
+</table>
+
+<h3 id="wounds">Система ран</h3>
+<p>Вражеские пули могут нанести <strong>ранения</strong> помимо урона HP:</p>
+<ul>
+  <li><strong>Хромота (нога)</strong> — скорость падает до 60%. Длится 8 сек. Иконка в правом верхнем углу.</li>
+  <li><strong>Тряска руки</strong> — разброс оружия ×2.5. Длится 6 сек. Трудно целиться!</li>
+  <li><strong>Кровотечение</strong> — −2 HP каждую секунду в течение 10 сек. Шанс 40% при попадании в тело. Экран окрашивается красным.</li>
+</ul>
+<div class="tip">Кровотечение лечится аптечкой (<kbd>H</kbd>). Хромота и тряска проходят сами со временем.</div>
+
+<h3 id="healing">Лечение</h3>
+<ul>
+  <li><kbd>H</kbd> — использовать аптечку. Восстанавливает <strong>50 HP</strong> и останавливает кровотечение.</li>
+  <li>Аптечки покупаются в магазине (10 монет) или находятся на карте.</li>
+  <li>Количество аптечек показано слева внизу: "АПТЕЧКА: X".</li>
+</ul>
+
+<h3 id="equipment">Снаряжение (защита)</h3>
+<p>Покупается в магазине. Снижает урон по зонам, но <strong>изнашивается</strong> от попаданий:</p>
+<table>
+  <tr><th>Предмет</th><th>Цена</th><th>Защита</th><th>HP снаряжения</th></tr>
+  <tr><td>Каска</td><td>20 монет</td><td>Голова −50%</td><td>100</td></tr>
+  <tr><td>Бронежилет ТАК</td><td>25 монет</td><td>Тело −40%</td><td>150</td></tr>
+  <tr><td>Наколенники</td><td>15 монет</td><td>Ноги −30%</td><td>80</td></tr>
+</table>
+<p>Когда HP снаряжения падает до 0, оно ломается и защита пропадает. Каска показывает <strong>трещины на экране</strong> при повреждении.</p>
+
+<!-- ===== ВРАГИ ===== -->
+<h2 id="enemy-ai">Искусственный интеллект врагов</h2>
+<p>Враги имеют <strong>6 состояний</strong> поведения:</p>
+<table>
+  <tr><th>Состояние</th><th>Поведение</th></tr>
+  <tr><td><strong>idle</strong> (патруль)</td><td>Бродит по карте. Если увидит вас — переходит в бой</td></tr>
+  <tr><td><strong>combat</strong> (бой)</td><td>Поворачивается к вам, стреляет, двигается стрейфом</td></tr>
+  <tr><td><strong>hurt</strong> (оглушение)</td><td>Кратковременное оглушение после попадания</td></tr>
+  <tr><td><strong>dead</strong> (мёртв)</td><td>Рэгдолл-физика, тело можно толкать. Обыскать клавишей F</td></tr>
+  <tr><td><strong>blinded</strong> (ослеплён)</td><td>Мешок на голове, бродит наугад, стреляет в случайном направлении</td></tr>
+  <tr><td><strong>captured</strong> (захвачен)</td><td>В наручниках, следует за вами как живой щит</td></tr>
+</table>
+
+<h3 id="capture">Захват врагов</h3>
+<p>Для захвата нужны предметы из магазина: <strong>Мешок</strong> (8 монет) и <strong>Наручники</strong> (12 монет).</p>
+<ol>
+  <li>Подойдите к живому врагу сзади.</li>
+  <li>Нажмите <kbd>G</kbd> — мешок на голову. Враг ослеплён, бродит и стреляет наугад.</li>
+  <li>Нажмите <kbd>G</kbd> ещё раз — наручники. Враг <strong>захвачен</strong> и следует за вами.</li>
+</ol>
+<div class="tip">Захваченный враг работает как <strong>живой щит</strong> — вражеские пули могут попасть в него вместо вас.</div>
+
+<h3 id="zombies">Зомби</h3>
+<p>Зомби появляются в режимах <strong>Зомби-волны</strong> и <strong>Заражение</strong>:</p>
+<ul>
+  <li>Зелёная кожа, без одежды и оружия.</li>
+  <li>Бегут напрямую к игроку с вытянутыми руками.</li>
+  <li>Наносят <strong>~15 урона при контакте</strong>.</li>
+  <li>Не стреляют — только ближний бой.</li>
+  <li>В режиме Заражение — заражают людей при касании.</li>
+</ul>
+
+<h3 id="boss">Босс: "Чёрная Ошибка"</h3>
+<p>Секретный босс, доступный через <strong>чит-код</strong>.</p>
+<ul>
+  <li><strong>2000 HP</strong> — очень живучий.</li>
+  <li>Глитч-эффекты, фиолетовое свечение.</li>
+  <li>Урон по телу снижен на <strong>50%</strong>.</li>
+  <li>Хедшот урон ограничен <strong>150</strong>.</li>
+  <li>Награда за победу: <strong>Глитч-пушка</strong> (конвертирует врагов в союзников).</li>
+</ul>
+
+<!-- ===== СОЮЗНИКИ ===== -->
+<h2 id="allies">Союзники</h2>
+<p>В основном режиме вам помогают <strong>7 союзников</strong>:</p>
+<table>
+  <tr><th>Имя</th><th>Роль</th><th>Каска</th><th>Поведение</th></tr>
+  <tr><td>Диана</td><td>Медик</td><td style="color:#4af">Синяя + крест</td><td>Лечит раненых союзников и игрока</td></tr>
+  <tr><td>Павел</td><td>Защитник</td><td style="color:#0f0">Зелёная</td><td>Ищет и атакует врагов</td></tr>
+  <tr><td>Матвей</td><td>Защитник</td><td style="color:#0f0">Зелёная</td><td>Ищет и атакует врагов</td></tr>
+  <tr><td>Глеб</td><td>Защитник</td><td style="color:#0f0">Зелёная</td><td>Ищет и атакует врагов</td></tr>
+  <tr><td>Вика Ф.</td><td>Медик</td><td style="color:#4af">Синяя + крест</td><td>Лечит раненых союзников и игрока</td></tr>
+  <tr><td>Есения К.</td><td>Медик</td><td style="color:#4af">Синяя + крест</td><td>Лечит раненых союзников и игрока</td></tr>
+  <tr><td>Саида</td><td>—</td><td style="color:#f8a">Розовая</td><td>Бродит случайно (бесполезна в бою)</td></tr>
+</table>
+<ul>
+  <li>Над головой каждого союзника — <strong>имя и полоска HP</strong>.</li>
+  <li>На миникарте — <strong>голубые точки</strong>.</li>
+  <li>Могут быть ранены шальными пулями врагов.</li>
+  <li><kbd>F</kbd> возле раненого союзника — <strong>вылечить</strong> (тратит 1 аптечку).</li>
+</ul>
+
+<h3 id="commands">Команды союзникам</h3>
+<p>Зажмите <kbd>X</kbd> — появится <strong>колесо команд</strong>:</p>
+<table>
+  <tr><th>Кнопка</th><th>Команда</th><th>Эффект</th></tr>
+  <tr><td>1</td><td>За мной</td><td>Союзники идут за вами</td></tr>
+  <tr><td>2</td><td>Стой</td><td>Союзники стоят на месте</td></tr>
+  <tr><td>3</td><td>Атакуй</td><td>Союзники агрессивно ищут врагов</td></tr>
+  <tr><td>4</td><td>Лечи</td><td>Медики приоритетно лечат раненых</td></tr>
+</table>
+
+<!-- ===== ТЕХНИКА ===== -->
+<h2 id="vehicle">Машина</h2>
+<p>На карте есть <strong>машина</strong> (отмечена на миникарте).</p>
+<ul>
+  <li><kbd>F</kbd> рядом с машиной — <strong>сесть за руль</strong>.</li>
+  <li><kbd>W</kbd>/<kbd>S</kbd> — газ/тормоз. <kbd>A</kbd>/<kbd>D</kbd> — руль.</li>
+  <li>Максимальная скорость: <strong>25 ед/сек</strong>, задний ход: −8.</li>
+  <li><strong>Давить врагов</strong> — урон = скорость × 8.</li>
+  <li><kbd>F</kbd> — выйти из машины.</li>
+</ul>
+<div class="tip">В основном режиме машина нужна для эвакуации. Подъедьте к ней и нажмите F, когда все задачи выполнены.</div>
+
+<h2 id="drone">Дрон</h2>
+<p>Покупается в магазине (30 монет). Нажмите <kbd>V</kbd> для активации.</p>
+<ul>
+  <li><strong>Вид сверху</strong> — видите карту с высоты.</li>
+  <li><kbd>W</kbd>/<kbd>A</kbd>/<kbd>S</kbd>/<kbd>D</kbd> — управление полётом.</li>
+  <li>Батарея <strong>10 секунд</strong>.</li>
+  <li>Враги в радиусе 25 единиц <strong>отмечаются на миникарте</strong> (видны 10 сек после обнаружения).</li>
+  <li><kbd>V</kbd> — вернуться в тело (или автоматически при разряде).</li>
+</ul>
+<div class="warn">Пока вы управляете дроном, ваше тело <strong>стоит на месте</strong> и уязвимо! Используйте из укрытия.</div>
+
+<h2 id="mines">Мины</h2>
+<p>Покупаются в магазине (12 монет за 3 шт). Нажмите <kbd>C</kbd> для установки.</p>
+<ul>
+  <li>Мина ставится на пол под вами.</li>
+  <li><strong>1.5 секунды</strong> до активации (чтобы вы успели отойти).</li>
+  <li>Взрыв: <strong>120 урона</strong> по врагам рядом.</li>
+  <li>Максимум <strong>5 мин</strong> одновременно на карте.</li>
+  <li>Счётчик мин: внизу слева — "[C] Mines: X (Y/5)".</li>
+</ul>
+
+<h2 id="cameras">Камеры наблюдения</h2>
+<p>Появляются в режимах <strong>Battle Royale</strong> и <strong>Wave Defense</strong>.</p>
+<ul>
+  <li>На миникарте — <strong>голубые боксы</strong>.</li>
+  <li><kbd>Tab</kbd> — переключение между камерами.</li>
+  <li>Можно видеть другие части карты без перемещения.</li>
+  <li>Камеры можно <strong>уничтожить</strong> выстрелами.</li>
+</ul>
+
+<h2 id="gravgun">Гравитационная пушка</h2>
+<p>Покупается в магазине (35 монет). Слот <kbd>6</kbd>.</p>
+<ol>
+  <li>Выберите грав-пушку клавишей <kbd>6</kbd>.</li>
+  <li>Наведитесь на <strong>бочку</strong> (до 6м) или <strong>мёртвое тело</strong> (до 5м).</li>
+  <li><kbd>ПКМ</kbd> — <strong>захватить</strong> объект. Он будет парить перед вами.</li>
+  <li><kbd>ЛКМ</kbd> — <strong>швырнуть</strong> объект вперёд!</li>
+</ol>
+<div class="tip">Бочки взрываются при ударе! Швырните красную бочку в группу врагов для максимального эффекта.</div>
+
+<!-- ===== ЭКОНОМИКА ===== -->
+<h2 id="shop">Магазин</h2>
+<p>Открывается кнопкой <strong>"МАГАЗИН"</strong> в главном меню. Всего <strong>28 товаров</strong>.</p>
+
+<h4>Расходники</h4>
+<table>
+  <tr><th>Товар</th><th>Цена</th><th>Эффект</th></tr>
+  <tr><td>Патроны ×60</td><td>5</td><td>+60 запасных патронов</td></tr>
+  <tr><td>Аптечка</td><td>10</td><td>Лечит 50HP, стоп кровотечение (клав. H)</td></tr>
+  <tr><td>Гранаты ×3</td><td>10</td><td>Взрыв по области (клав. T)</td></tr>
+  <tr><td>Мины ×3</td><td>12</td><td>120 урона, ставить клав. C</td></tr>
+  <tr><td>Мешок</td><td>8</td><td>На голову врагу (клав. G)</td></tr>
+  <tr><td>Наручники</td><td>12</td><td>Захватить ослеплённого врага (клав. G)</td></tr>
+</table>
+
+<h4>Оружие</h4>
+<table>
+  <tr><th>Товар</th><th>Цена</th><th>Эффект</th></tr>
+  <tr><td>Дробовик</td><td>30</td><td>8 дробин, клав 2</td></tr>
+  <tr><td>Пистолет</td><td>10</td><td>Быстрый, бесконечные патроны, клав 3</td></tr>
+  <tr><td>Снайперка</td><td>40</td><td>200 урон, прицел, клав 4</td></tr>
+  <tr><td>Глитч-пушка</td><td>500</td><td>Враги → союзники, клав 5 (после босса)</td></tr>
+  <tr><td>Грав. пушка</td><td>35</td><td>Кидать объекты, клав 6</td></tr>
+</table>
+
+<h4>Улучшения</h4>
+<table>
+  <tr><th>Товар</th><th>Цена</th><th>Эффект</th></tr>
+  <tr><td>Бронежилет+</td><td>15</td><td>+50 максимум HP (навсегда)</td></tr>
+  <tr><td>Улучш. Автомат</td><td>25</td><td>+15 урон (навсегда)</td></tr>
+  <tr><td>Бронебойные</td><td>20</td><td>Урон ×2, 1 миссия</td></tr>
+  <tr><td>×2 Награда</td><td>15</td><td>40 монет за ответ (мат. режим)</td></tr>
+  <tr><td>Заморозка</td><td>12</td><td>Враги стоят 15 сек</td></tr>
+</table>
+
+<h4>Снаряжение</h4>
+<table>
+  <tr><th>Товар</th><th>Цена</th><th>Эффект</th></tr>
+  <tr><td>Каска</td><td>20</td><td>Голова −50% урон (100 HP, изнашивается)</td></tr>
+  <tr><td>Бронежилет ТАК</td><td>25</td><td>Тело −40% урон (150 HP, изнашивается)</td></tr>
+  <tr><td>Наколенники</td><td>15</td><td>Ноги −30% урон (80 HP, изнашивается)</td></tr>
+</table>
+
+<h4>Способности (покупка навсегда)</h4>
+<table>
+  <tr><th>Товар</th><th>Цена</th><th>Эффект</th></tr>
+  <tr><td>Щит</td><td>20</td><td>ПКМ — блокирует 200HP урона</td></tr>
+  <tr><td>Замедление</td><td>15</td><td>Z — время ×0.3, 3 секунды</td></tr>
+  <tr><td>Ночное зрение</td><td>18</td><td>N — зелёный фильтр</td></tr>
+  <tr><td>Фонарик</td><td>8</td><td>L — конус света</td></tr>
+  <tr><td>Дрон</td><td>30</td><td>V — разведка с воздуха 10 сек</td></tr>
+  <tr><td>Двойн. пистолет</td><td>25</td><td>M — ×2 темп стрельбы</td></tr>
+</table>
+
+<h4>Косметика</h4>
+<table>
+  <tr><th>Товар</th><th>Цена</th><th>Эффект</th></tr>
+  <tr><td>Золотой скин</td><td>50</td><td>Золотой цвет оружия</td></tr>
+  <tr><td>Камуфляж</td><td>15</td><td>5 вариантов формы врагов</td></tr>
+</table>
+
+<h2 id="trade">Торговля</h2>
+<p>Кнопка <strong>"ТОРГОВЛЯ"</strong> в главном меню.</p>
+<ul>
+  <li>Обыскивайте трупы врагов клавишей <kbd>F</kbd> во время миссии — получаете <strong>лут</strong>.</li>
+  <li>После миссии лут можно <strong>продать</strong> на экране торговли.</li>
+  <li>Кнопка "ПРОДАТЬ ВСЁ" — продаёт весь лут за монеты.</li>
+  <li>Монеты <strong>сохраняются между миссиями</strong>.</li>
+</ul>
+
+<!-- ===== НАСТРОЙКИ ===== -->
+<h2 id="graphics">Настройки графики</h2>
+<p>Кнопка <strong>"НАСТРОЙКИ"</strong> в главном меню.</p>
+
+<h4>Пресеты качества</h4>
+<p>Нажимайте кнопку <strong>"КАЧЕСТВО"</strong> для переключения между пресетами:</p>
+<table>
+  <tr><th>Параметр</th><th>Low</th><th>Medium</th><th>High</th><th>Ultra</th></tr>
+  <tr><td>Разрешение</td><td>50%</td><td>75%</td><td>100%</td><td>100%</td></tr>
+  <tr><td>Частицы</td><td>50</td><td>150</td><td>300</td><td>500</td></tr>
+  <tr><td>Дальность тумана</td><td>15</td><td>35</td><td>55</td><td>100</td></tr>
+  <tr><td>Тени</td><td>Выкл</td><td>Вкл</td><td>Вкл</td><td>Вкл</td></tr>
+  <tr><td>Декали крови</td><td>20</td><td>60</td><td>150</td><td>250</td></tr>
+  <tr><td>Куски (гиблеты)</td><td>5</td><td>15</td><td>30</td><td>50</td></tr>
+</table>
+
+<h4>Индивидуальные слайдеры (секция "ГРАФИКА")</h4>
+<ul>
+  <li><strong>Разрешение</strong> (25–100%) — снижение разрешения рендера для повышения FPS.</li>
+  <li><strong>Частицы</strong> (30–500) — максимальное количество частиц на экране.</li>
+  <li><strong>Туман</strong> (15–100) — дальность видимости.</li>
+  <li><strong>Декали крови</strong> (0–300) — максимум пятен крови на полу и стенах.</li>
+  <li><strong>Куски</strong> (0–60) — максимум летающих кусков.</li>
+  <li><strong>Тени</strong> — вкл/выкл (ambient occlusion на моделях).</li>
+</ul>
+
+<h4>Визуальные эффекты (секция "ВИЗУАЛЬНЫЕ ЭФФЕКТЫ")</h4>
+<ul>
+  <li><strong>Яркость</strong> (50–150%) — общая яркость картинки.</li>
+  <li><strong>Контраст</strong> (50–150%) — контрастность.</li>
+  <li><strong>Насыщенность</strong> (0–200%) — интенсивность цветов.</li>
+  <li><strong>Виньетка</strong> (0–100%) — затемнение краёв экрана.</li>
+</ul>
+
+<h2 id="effects">Спецэффекты</h2>
+<table>
+  <tr><th>Эффект</th><th>Как включить</th><th>Описание</th></tr>
+  <tr><td>Неон</td><td>Кнопка в настройках</td><td>Усиленные цвета, светящиеся накладки</td></tr>
+  <tr><td>Дождь</td><td>Кнопка в настройках</td><td>Анимированные капли дождя + молнии</td></tr>
+  <tr><td>Ночное зрение</td><td><kbd>N</kbd> (после покупки)</td><td>Зелёный фильтр, видно в темноте</td></tr>
+  <tr><td>Фонарик</td><td><kbd>L</kbd> (после покупки)</td><td>Конус света от камеры</td></tr>
+</table>
+
+<h2 id="weather">Динамическая погода</h2>
+<p>Погода меняется автоматически каждые <strong>30–60 секунд</strong>:</p>
+<table>
+  <tr><th>Погода</th><th>Шанс</th><th>Видимость</th><th>Скорость</th></tr>
+  <tr><td>Ясно</td><td>60%</td><td>Нормальная</td><td>Нормальная</td></tr>
+  <tr><td>Туман</td><td>—</td><td>×0.4</td><td>Нормальная</td></tr>
+  <tr><td>Метель</td><td>—</td><td>×0.6</td><td>×0.7 (замедление)</td></tr>
+  <tr><td>Песчаная буря</td><td>—</td><td>×0.3</td><td>×0.85</td></tr>
+</table>
+<p>Текущая погода отображается вверху экрана.</p>
+
+<!-- ===== ДОПОЛНИТЕЛЬНО ===== -->
+<h2 id="editor">Редактор карт</h2>
+<p>Кнопка <strong>"РЕДАКТОР КАРТ"</strong> в главном меню.</p>
+<ol>
+  <li>Выберите <strong>инструмент</strong> вверху: Стена, Пусто, Ящик, Враг, Деньги, Машина, Спавн.</li>
+  <li><strong>Рисуйте</strong> левой кнопкой мыши по сетке.</li>
+  <li><strong>СОХРАНИТЬ</strong> — сохраняет карту в память браузера (localStorage).</li>
+  <li><strong>ЗАГРУЗИТЬ</strong> — загружает сохранённую карту.</li>
+  <li><strong>СБРОС</strong> — возвращает карту по умолчанию.</li>
+  <li><strong>ИГРАТЬ</strong> — запускает игру на вашей карте!</li>
+</ol>
+<div class="warn">Убедитесь, что на карте есть хотя бы: <strong>1 спавн</strong> (точка появления игрока), <strong>враги</strong> и <strong>машина</strong> для эвакуации.</div>
+
+<h2 id="cheats">Чит-коды</h2>
+<p>Вводятся в поле <strong>"ЧИТ-КОД"</strong> на экране Настроек. Регистр не важен.</p>
+<table>
+  <tr><th>Код</th><th>Эффект</th></tr>
+  <tr><td><code>BLOOD A NOT 5 YERS OLD A 18 YERS OLD</code></td><td>Система крови и расчленения (18+)</td></tr>
+  <tr><td><code>free pls 150</code></td><td>+150 монет</td></tr>
+  <tr><td><code>skelet with black gun plssss</code></td><td>Режим скелета + камера 3-го лица</td></tr>
+  <tr><td><code>black world spawn</code></td><td>Бой с боссом "Чёрная Ошибка"</td></tr>
+</table>
+
+<div class="secret">Режим скелета превращает вашего персонажа в 3D-скелет. Камера переключается на вид от 3-го лица. Можно вернуться клавишей <kbd>F5</kbd>.</div>
+
+<h2 id="hud">Интерфейс (HUD)</h2>
+<p>Описание всех элементов на экране во время игры:</p>
+
+<h4>Верх-лево</h4>
+<ul>
+  <li><strong>HP бар</strong> — красная полоса здоровья с числом ("100 HP").</li>
+  <li><strong>XP бар</strong> — голубая полоса под HP ("LV 1 | 0/100 XP").</li>
+  <li><strong>Цели миссии</strong> — жёлтый текст под XP (количество врагов, деньги).</li>
+  <li><strong>Снаряжение</strong> — состояние каски/жилета/наколенников (если есть).</li>
+</ul>
+
+<h4>Верх-право</h4>
+<ul>
+  <li><strong>REC</strong> — мигающая красная точка бодикамеры.</li>
+  <li><strong>Раны</strong> — статус ранений (хромота, тряска, кровотечение).</li>
+  <li><strong>Режим Джаггернаута</strong> — счётчик волн и убийств (только в этом режиме).</li>
+</ul>
+
+<h4>Центр</h4>
+<ul>
+  <li><strong>Прицел</strong> — зелёный крест с зазором.</li>
+  <li><strong>Таймер</strong> — красные цифры (эвакуация, режимы с таймером).</li>
+  <li><strong>HEADSHOT</strong> — жёлтая надпись при хедшоте.</li>
+  <li><strong>Подсказки</strong> — жёлтый текст внизу-центр ("Нажмите F для...").</li>
+  <li><strong>Погода</strong> — текущая погода вверху-центр.</li>
+</ul>
+
+<h4>Низ-лево</h4>
+<ul>
+  <li><strong>Миникарта</strong> — 150×150px. Белый = вы. Красные = враги. Голубые = союзники.</li>
+  <li><strong>Аптечки</strong> — "АПТЕЧКА: X" (зелёный текст).</li>
+  <li><strong>Мины</strong> — "[C] Mines: X (Y/5)".</li>
+</ul>
+
+<h4>Низ-право</h4>
+<ul>
+  <li><strong>Патроны</strong> — "30 / 90" (текущий магазин / запас).</li>
+  <li><strong>Название оружия</strong> — серый текст над патронами.</li>
+  <li><strong>Перезарядка</strong> — голубая полоса прогресса.</li>
+  <li><strong>Щит</strong> — HP щита (если активен).</li>
+  <li><strong>Грав-пушка</strong> — статус захвата.</li>
+</ul>
+
+<h4>Низ-центр</h4>
+<ul>
+  <li><strong>Стамина</strong> — голубая полоса (видна при расходе).</li>
+  <li><strong>Замедление</strong> — оранжевая полоса энергии (при использовании Z).</li>
+</ul>
+
+<!-- ===== СОВЕТЫ ===== -->
+<h2 id="tips">Советы новичкам</h2>
+
+<div class="tip">Всегда перезаряжайтесь в укрытии. 4-фазная перезарядка длится 1–2.8 секунды — в это время вы беззащитны.</div>
+
+<div class="tip">Хедшоты наносят <strong>300 урона</strong> — мгновенно убивают любого обычного врага. Цельтесь в голову!</div>
+
+<div class="tip">Используйте <kbd>Q</kbd>/<kbd>E</kbd> (наклон) для стрельбы из-за угла. Ваш хитбокс смещается, а вы видите врага.</div>
+
+<div class="tip">Дрон (<kbd>V</kbd>) — отличный инструмент разведки. Запускайте из укрытия, чтобы увидеть позиции врагов на миникарте.</div>
+
+<div class="tip">Мины (<kbd>C</kbd>) + узкие проходы = ловушка. Заманите врагов в коридор с минами.</div>
+
+<div class="tip">Тихое убийство (<kbd>B</kbd>) не поднимает тревогу. Подкрадывайтесь сзади для бесшумного устранения.</div>
+
+<div class="tip">В режиме Зомби держите дистанцию — зомби опасны только вблизи. Отступайте и стреляйте.</div>
+
+<div class="tip">Замедление времени (<kbd>Z</kbd>) — козырь в трудной ситуации. Враги двигаются в ×0.3, а вы — нормально. 3 секунды, чтобы перестрелять всех!</div>
+
+<div class="tip">Пистолет (клав. 3) — единственное оружие с бесконечным запасом патронов. Если всё кончилось — переключайтесь на него.</div>
+
+<div class="tip">Покупайте <strong>Бронежилет+</strong> (15 монет) в первую очередь — +50 HP навсегда. После 5 покупок разблокируется режим Джаггернаут.</div>
+
+<br>
+<a class="back-btn" href="index.html">Вернуться в игру</a>
+
+<p style="color:#333;margin-top:40px;font-size:12px">Operation Abandoned v9 | Help Guide</p>
+
+</main>
+
+<script>
+// Highlight active sidebar link on scroll
+const links = document.querySelectorAll('#sidebar a');
+const sections = [];
+links.forEach(link => {
+  const id = link.getAttribute('href').slice(1);
+  const el = document.getElementById(id);
+  if(el) sections.push({el, link});
+});
+window.addEventListener('scroll', () => {
+  let current = sections[0];
+  for(const s of sections){
+    if(s.el.getBoundingClientRect().top <= 100) current = s;
+  }
+  links.forEach(l => l.classList.remove('active'));
+  if(current) current.link.classList.add('active');
+}, {passive:true});
+</script>
+</body>
+</html>
