@@ -4326,14 +4326,19 @@ function render(){
   const aspect=canvas.width/canvas.height;
   const rwp=WEAPONS[currentWeapon]||WEAPONS[0];
   const adsFov=rwp.zoom||0.4;
-  const fov=player.ads?adsFov:1.2;
+  const fov=droneActive?1.5:player.ads?adsFov:1.2;
   const proj=perspective(fov, aspect, 0.1, 100);
   // Lean offset: shift camera sideways + slight roll via pitch/yaw trick
   const leanOff=leanAmount*0.45; // sideways offset
   const leanRoll=leanAmount*0.08; // slight head tilt
   const rxCam=Math.cos(player.yaw), rzCam=-Math.sin(player.yaw); // right vector
   let camX,camY,camZ;
-  if(thirdPersonCam){
+  let viewYaw=player.yaw, viewPitch=player.pitch+leanRoll;
+  if(droneActive){
+    // Drone: top-down camera looking straight down
+    camX=droneX; camY=18; camZ=droneZ;
+    viewYaw=0; viewPitch=-Math.PI/2+0.01; // looking straight down
+  } else if(thirdPersonCam){
     // Third-person camera: 3 units behind, 1.5 above player, with wall collision
     const fwdX=-Math.sin(player.yaw)*Math.cos(player.pitch);
     const fwdZ=-Math.cos(player.yaw)*Math.cos(player.pitch);
@@ -4350,7 +4355,7 @@ function render(){
   }
   const shakeYaw=screenShake*(Math.random()-0.5)*0.04;
   const shakePitch=screenShake*(Math.random()-0.5)*0.04;
-  const view=viewMatrix(camX, camY, camZ, player.yaw+shakeYaw, player.pitch+leanRoll+shakePitch);
+  const view=viewMatrix(camX, camY, camZ, viewYaw+shakeYaw, viewPitch+shakePitch);
   const vp=mat4Mul(proj,view);
   _lastVP=vp; // cache for HUD label projection
 
@@ -4504,7 +4509,7 @@ function render(){
   }
   resetAttribs();
   // In 3rd person, skip 1st-person weapon
-  if(!thirdPersonCam) drawWeapon3D(vp);
+  if(!thirdPersonCam && !droneActive) drawWeapon3D(vp);
   // Flashlight canvas overlay
   if(flashlightOn&&hasFlashlight){
     const fctx=document.getElementById('rainCanvas').getContext('2d');
@@ -4853,7 +4858,10 @@ function updateHUD(){
   // Scope overlay
   const scopeEl=document.getElementById('scopeOverlay');
   const crossEl=document.getElementById('crosshair');
-  if(player.ads){
+  if(droneActive){
+    scopeEl.style.display='none';
+    crossEl.style.display='none';
+  } else if(player.ads){
     scopeEl.style.display='block';
     crossEl.style.display='none';
     drawScope();
