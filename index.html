@@ -240,8 +240,7 @@ canvas#gl{width:100%;height:100%;display:block}
   <div class="shopItem" id="buy_bullettime"><div class="sName">Замедление</div><div class="sPrice">15 монет</div><div class="sDesc">Z — время ×0.3</div></div>
   <div class="shopItem" id="buy_nvg"><div class="sName">Ночное зрение</div><div class="sPrice">18 монет</div><div class="sDesc">N — зелёный фильтр</div></div>
   <div class="shopItem" id="buy_flashlight"><div class="sName">Фонарик</div><div class="sPrice">8 монет</div><div class="sDesc">F — подсветка</div></div>
-  <
-   class="shopItem" id="buy_glitch" style="display:none"><div class="sName">Глитч-пушка</div><div class="sPrice">500 монет</div><div class="sDesc">Враги → союзники [5]</div></div>
+  <div class="shopItem" id="buy_glitch" style="display:none"><div class="sName">Глитч-пушка</div><div class="sPrice">500 монет</div><div class="sDesc">Враги → союзники [5]</div></div>
   <div class="shopItem" id="buy_mine"><div class="sName">Мины ×3</div><div class="sPrice">12 монет</div><div class="sDesc">Ставь [C], 120 урон</div></div>
   <div class="shopItem" id="buy_akimbo"><div class="sName">Двойн. Пистолет</div><div class="sPrice">25 монет</div><div class="sDesc">2× скорость, [M]</div></div>
   <div class="shopItem" id="buy_eqhelmet"><div class="sName">Каска</div><div class="sPrice">20 монет</div><div class="sDesc">Голова -50% урон</div></div>
@@ -6306,6 +6305,7 @@ function frame(time){
       render();
       drawMinimap();
       updateHUD();
+
       drawScreenBlood(dt);
       drawRain(dt);
       drawFlashlight();
