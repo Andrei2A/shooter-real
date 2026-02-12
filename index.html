@@ -175,7 +175,6 @@ canvas#gl{width:100%;height:100%;display:block}
  <button id="btnZombie" style="color:#a44;border-color:#a44;text-shadow:0 0 10px #a44">ЗОМБИ-ВОЛНЫ</button>
  <button id="btnBattleRoyale" style="color:#f0a;border-color:#f0a;text-shadow:0 0 10px #f0a">КОРОЛЕВСКАЯ БИТВА</button>
  <button id="btnWaveDefense" style="color:#0af;border-color:#0af;text-shadow:0 0 10px #0af">ВОЛНА ОБОРОНЫ</button>
- <button id="btnInfection" style="color:#4a0;border-color:#4a0;text-shadow:0 0 10px #4a0">ЗАРАЖЕНИЕ</button>
  <button id="btnMapEditor" style="color:#888;border-color:#888">РЕДАКТОР КАРТ</button>
  <button id="btnSettings" style="color:#aaa;border-color:#aaa">НАСТРОЙКИ</button>
  <button id="btnHelp" onclick="window.open('help.html','_blank')" style="color:#0ff;border-color:#0ff;text-shadow:0 0 10px #0ff;pointer-events:auto">ПОМОЩЬ</button>
@@ -1514,9 +1513,7 @@ let inVehicle=false, vehicleX=0, vehicleZ=0, vehicleAngle=0, vehicleSpeed=0;
 let cameras=[], cameraViewActive=false, cameraViewIndex=0;
 // 12. Gravity gun
 let gravHolding=null, gravDist=3;
-// 13. Infection
-let infectionTimer=0, infectedCount=0;
-// 14. Wound system
+// 13. Wound system
 let woundLeg=false, woundArm=false, woundBleed=false, woundLegTimer=0, woundArmTimer=0, woundBleedTimer=0;
 // 15. Stealth kill
 let stealthKillCd=0;
@@ -1852,37 +1849,6 @@ function spawnWDWave(wave){
     const idx=Math.random()*openCells.length|0;
     const c=openCells.splice(idx,1)[0];
     enemies.push({x:c.x,z:c.z,hp:80+wave*15,state:'combat',angle:Math.random()*Math.PI*2,shootTimer:0.5+Math.random(),hurtTimer:0,alertTimer:0,flash:0,walkPhase:0,speed:3+Math.random()*1.5+wave*0.2,voiceCd:0});
-  }
-}
-
-function initInfection(){
-  const sp=findSpawn();
-  player={x:sp.x, y:PLAYER_H, z:sp.z, vx:0, vy:0, vz:0, yaw:Math.PI, pitch:0, hp:MAX_HP+armorBonus, onGround:true, crouching:false, ads:false, sprinting:false, stamina:STAMINA_MAX, _ctrlHeld:false, _interactHeld:false, _captureHeld:false};
-  moneyBags=[]; allies=[];
-  ammo=MAG_SIZE; reserveAmmo=RESERVE_AMMO;
-  reloading=false; reloadTimer=0; shootCd=0; recoil=0; stepTimer=0;
-  hitMarkerTimer=0; headshotTimer=0; bleeding=false; bleedTimer=0;
-  evacTimer=999; evacActive=false; capturedEnemy=null;
-  particles.length=0; bloodDecals.length=0; giblets.length=0; bloodPools.length=0; screenBloodDrops.length=0; screenShake=0; helmetCracks=[]; grenades.length=0;
-  spawnBarrels(); spawnDoors();
-  infectionTimer=90; infectedCount=0;
-  // Spawn zombie and normal enemies
-  const openCells=[];
-  for(let z=1;z<MAP_H-1;z++) for(let x=1;x<MAP_W-1;x++){
-    if(MAP[z][x]===0){const dx=x*CELL+CELL/2-sp.x,dz=z*CELL+CELL/2-sp.z;if(dx*dx+dz*dz>12*12)openCells.push({x:x*CELL+CELL/2,z:z*CELL+CELL/2});}
-  }
-  enemies=[];
-  // 2 initial zombies
-  for(let i=0;i<2&&openCells.length>0;i++){
-    const idx=Math.random()*openCells.length|0;
-    const c=openCells.splice(idx,1)[0];
-    enemies.push({x:c.x,z:c.z,hp:120,state:'combat',angle:Math.random()*Math.PI*2,shootTimer:999,hurtTimer:0,alertTimer:0,flash:0,walkPhase:0,speed:2.5+Math.random(),voiceCd:0,_zombie:true,_infected:true});
-  }
-  // 8 normal enemies
-  for(let i=0;i<8&&openCells.length>0;i++){
-    const idx=Math.random()*openCells.length|0;
-    const c=openCells.splice(idx,1)[0];
-    enemies.push({x:c.x,z:c.z,hp:80,state:'idle',angle:Math.random()*Math.PI*2,shootTimer:1+Math.random()*2,hurtTimer:0,alertTimer:0,flash:0,walkPhase:0,speed:3+Math.random(),voiceCd:0});
   }
 }
 
@@ -5605,7 +5571,7 @@ function updateHUD(){
     if(currentWeapon===5&&hasGravGun){ggEl.style.display='block';ggEl.textContent='ГРАВ-ПУШКА'+(gravHolding?' [УДЕРЖ]':' [ПКМ хват]');}
     else ggEl.style.display='none';
   }
-  // Battle Royale / Wave Defense / Infection objectives
+  // Battle Royale / Wave Defense objectives
   if(gameMode==='battleroyale'){
     const alive=enemies.filter(e=>e.hp>0).length;
     document.getElementById('objTxt').innerText='КОРОЛЕВСКАЯ БИТВА\nФаза: '+(brPhase+1)+'\nВрагов: '+alive+'\nЗона сужается: '+Math.ceil(brShrinkTimer)+'с';
@@ -5620,11 +5586,6 @@ function updateHUD(){
     const alive=enemies.filter(e=>e.hp>0).length;
     document.getElementById('objTxt').innerText='ВОЛНА ОБОРОНЫ\nВолна: '+wdWave+'/5\nВрагов: '+alive+'\nТочка HP: '+Math.ceil(wdPointHP);
     if(wdPointHP<=0){state='dead';playSound('death');document.getElementById('deathScreen').style.display='flex';document.getElementById('deathScreen').querySelector('p').textContent='Точка захвачена! Оборона провалена.';try{document.exitPointerLock();}catch(ex){}}
-  }
-  if(gameMode==='infection'){
-    const zombies=enemies.filter(e=>e.hp>0&&e._infected).length;
-    const humans=enemies.filter(e=>e.hp>0&&!e._infected).length;
-    document.getElementById('objTxt').innerText='ЗАРАЖЕНИЕ\nЗомби: '+zombies+' | Люди: '+humans+'\nВремя: '+Math.ceil(infectionTimer)+'с\nВыживи!';
   }
   // Camera view
   if(cameraViewActive&&cameras.length>0&&cameras[cameraViewIndex]&&cameras[cameraViewIndex].alive){
@@ -5807,12 +5768,6 @@ const game = {
     spawnCameras();
     try { canvas.requestPointerLock(); } catch(e){}
   },
-  startInfection(){
-    try { initAudio(); } catch(e){}
-    gameMode='infection'; initInfection(); state='playing';
-    document.getElementById('menuScreen').style.display='none';
-    try { canvas.requestPointerLock(); } catch(e){}
-  },
   restart(){
     if(gameMode==='math') initMathMode();
     else if(gameMode==='juggernaut') initJuggernaut();
@@ -5820,7 +5775,6 @@ const game = {
     else if(gameMode==='boss') initBossMode();
     else if(gameMode==='battleroyale') initBattleRoyale();
     else if(gameMode==='wavedefense') initWaveDefense();
-    else if(gameMode==='infection') initInfection();
     else initGame();
     // Reset new feature states
     droneActive=false;inVehicle=false;cameraViewActive=false;commandWheelOpen=false;
@@ -5960,7 +5914,6 @@ document.getElementById('btnMath').addEventListener('click',()=>{updateShopCoins
 document.getElementById('btnZombie').addEventListener('click',()=>{updateShopCoins();game.startZombie();});
 document.getElementById('btnBattleRoyale').addEventListener('click',()=>{updateShopCoins();game.startBattleRoyale();});
 document.getElementById('btnWaveDefense').addEventListener('click',()=>{updateShopCoins();game.startWaveDefense();});
-document.getElementById('btnInfection').addEventListener('click',()=>{updateShopCoins();game.startInfection();});
 document.getElementById('btnShop').addEventListener('click',openShop);
 document.getElementById('btnTrade').addEventListener('click',openTrade);
 document.getElementById('btnShopBack').addEventListener('click',()=>{document.getElementById('shopScreen').style.display='none';document.getElementById('menuScreen').style.display='flex';updateShopCoins();});
@@ -6255,36 +6208,6 @@ function frame(time){
           if(e.hp<=0) continue;
           const dd=Math.sqrt((e.x-wdPoint.x)**2+(e.z-wdPoint.z)**2);
           if(dd<4) wdPointHP-=5*dt;
-        }
-      }
-      // Infection mode
-      if(gameMode==='infection'){
-        infectionTimer-=dt;
-        // Zombie enemies can infect normal enemies on contact
-        for(const e of enemies){
-          if(e.hp<=0||!e._infected) continue;
-          for(const e2 of enemies){
-            if(e2===e||e2.hp<=0||e2._infected) continue;
-            const dd=Math.sqrt((e.x-e2.x)**2+(e.z-e2.z)**2);
-            if(dd<1.5){
-              e2._infected=true;e2._zombie=true;e2.state='combat';
-              e2.speed=2+Math.random();e2.shootTimer=999;
-              infectedCount++;
-              // Green flash
-              for(let p=0;p<5;p++) particles.push({x:e2.x+(Math.random()-.5),y:1+Math.random(),z:e2.z+(Math.random()-.5),vx:(Math.random()-.5)*3,vy:2+Math.random()*2,vz:(Math.random()-.5)*3,life:0.5+Math.random()*0.3,r:0.2,g:0.7,b:0.1,a:1,size:0.06});
-            }
-          }
-        }
-        if(infectionTimer<=0){
-          state='win';playSound('win');playerCoins+=50;
-          document.getElementById('winScreen').style.display='flex';
-          document.getElementById('winScreen').querySelector('p').textContent='Ты выжил 90 секунд!\n+50 монет';
-          try{document.exitPointerLock();}catch(ex){}
-        }
-        // If all enemies become zombies and touch player => death
-        const allZombie=enemies.filter(e=>e.hp>0).every(e=>e._infected);
-        if(allZombie&&enemies.filter(e=>e.hp>0).length>0){
-          // All infected - bonus win
         }
       }
       // Weather visual effects

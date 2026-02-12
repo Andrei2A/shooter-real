@@ -41,7 +41,7 @@ node -e "const fs=require('fs');const html=fs.readFileSync('index.html','utf8');
 10. **PARTICLES** (~L1075) — `spawnParticles()`, `spawnDirectionalBlood()` (L1100), giblets, grenades, `updateParticles()`
 11. **GAME STATE** (~L1300) — variables, `WEAPONS[]` array (L1327), graphics settings (`gfx*` vars L1353), init functions:
     - `initGame()` (L1540), `initJuggernaut()` (L1584), `initMathMode()` (L1635), `initZombieMode()` (L1691), `initBossMode()` (L1731)
-    - `initBattleRoyale()` (L1796), `initWaveDefense()` (L1822), `initInfection()` (L1854)
+    - `initBattleRoyale()` (L1796), `initWaveDefense()` (L1822)
     - `spawnBarrels()` (L1753), `spawnDoors()` (L1765), `addXP()` (L1787)
 12. **MAP EDITOR** (~L2225) — `drawEditorMap()`, editor tool handling
 13. **PLAYER UPDATE** (~L2277) — `updatePlayer(dt)`: movement, collision, shooting, reload, F/G interaction, doors, objectives
@@ -84,7 +84,7 @@ limb  = baseM * T(pivot) * RX(swing) * T(offset) * S(size)
 - `captured` — handcuffed (G key), follows player as shield
 
 ### Game Modes
-`gameMode`: `'normal'` | `'juggernaut'` | `'math'` | `'zombie'` | `'boss'` | `'battleroyale'` | `'wavedefense'` | `'infection'`
+`gameMode`: `'normal'` | `'juggernaut'` | `'math'` | `'zombie'` | `'boss'` | `'battleroyale'` | `'wavedefense'`
 
 ### Graphics Settings System
 4 presets (low/medium/high/ultra) with individual slider overrides. Key functions: `applyGfxPreset()` (L1364), `resizeGfx()` (L1387), `applyGfxVisuals()` (L1397), `updateGfxUI()` (L1407)
@@ -132,7 +132,7 @@ Hidden behind cheat code. Directional blood spray, blood→decal conversion, per
 | Ctrl | Crouch toggle |
 | Shift | Sprint |
 | Q/E | Lean left/right |
-| F | Interact (loot, heal ally, doors, defuse) |
+| F | Interact (loot, heal ally, doors, vehicle, evacuate) |
 | G | Capture (bag then cuffs on enemy) |
 | H | Use medkit |
 | 1-6 | Weapon switch (rifle/shotgun/pistol/sniper/glitch/gravgun) |
