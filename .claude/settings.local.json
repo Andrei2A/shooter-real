@@ -8,7 +8,9 @@
       "Bash(git commit:*)",
       "Bash(git push:*)",
       "Bash(node:*)",
-      "Bash(comm:*)"
+      "Bash(comm:*)",
+      "Bash(git checkout:*)",
+      "Bash(del:*)"
     ]
   }
 }

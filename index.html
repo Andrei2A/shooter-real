@@ -8,51 +8,51 @@
 html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:'Segoe UI',Arial,sans-serif;user-select:none}
 canvas#gl{width:100%;height:100%;display:block}
 #ui{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none}
-#crosshair{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:24px;height:24px}
-#crosshair::before,#crosshair::after{content:'';position:absolute;background:#0f0;box-shadow:0 0 6px #0f0}
-#crosshair::before{width:2px;height:24px;left:11px;top:0}
-#crosshair::after{width:24px;height:2px;top:11px;left:0}
-#hpBar{position:absolute;top:20px;left:20px;width:250px;height:18px;background:rgba(0,0,0,.7);border:2px solid #f33;border-radius:3px;box-shadow:0 0 10px rgba(255,0,0,.3)}
-#hpFill{width:100%;height:100%;background:linear-gradient(90deg,#c00,#f44);border-radius:1px;transition:width .3s}
-#hpTxt{position:absolute;top:21px;left:280px;color:#fff;font-size:15px;text-shadow:0 0 8px #f00}
-#ammoTxt{position:absolute;bottom:40px;right:40px;color:#fff;font-size:22px;text-shadow:0 0 10px #0ff;font-weight:bold}
-#objTxt{position:absolute;top:55px;left:20px;color:#ff8;font-size:13px;text-shadow:0 0 5px #aa0;line-height:1.6}
-#timerTxt{position:absolute;top:12%;left:50%;transform:translateX(-50%);color:#f22;font-size:44px;font-weight:bold;text-shadow:0 0 20px #f00;display:none}
+#crosshair{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:28px;height:28px}
+#crosshair::before,#crosshair::after{content:'';position:absolute;background:#0f0;box-shadow:0 0 8px #0f0,0 0 2px #fff}
+#crosshair::before{width:2px;height:28px;left:13px;top:0;clip-path:polygon(0 0,100% 0,100% 38%,0 38%,0 62%,100% 62%,100% 100%,0 100%)}
+#crosshair::after{width:28px;height:2px;top:13px;left:0;clip-path:polygon(0 0,38% 0,38% 100%,0 100%,0 0,62% 0,62% 100%,100% 100%,100% 0,62% 0)}
+#hpBar{position:absolute;top:20px;left:20px;width:260px;height:22px;background:rgba(0,0,0,.75);border:2px solid #f33;border-radius:4px;box-shadow:0 0 12px rgba(255,0,0,.3),inset 0 1px 3px rgba(0,0,0,.5)}
+#hpFill{width:100%;height:100%;background:linear-gradient(90deg,#c00,#f44);border-radius:2px;transition:width .3s ease-out;box-shadow:0 0 8px rgba(255,50,50,.4)}
+#hpTxt{position:absolute;top:21px;left:290px;color:#fff;font-size:16px;font-weight:bold;text-shadow:0 0 8px #f00,0 1px 3px rgba(0,0,0,.8)}
+#ammoTxt{position:absolute;bottom:40px;right:40px;color:#fff;font-size:26px;text-shadow:0 0 10px #0ff,0 0 20px rgba(0,255,255,.2);font-weight:bold;font-family:'Courier New',monospace}
+#objTxt{position:absolute;top:55px;left:20px;color:#ffe066;font-size:15px;text-shadow:0 0 6px rgba(170,170,0,.6),0 1px 3px rgba(0,0,0,.8);line-height:1.7}
+#timerTxt{position:absolute;top:12%;left:50%;transform:translateX(-50%);color:#f33;font-size:48px;font-weight:bold;text-shadow:0 0 20px #f00,0 0 40px rgba(255,0,0,.3);display:none;font-family:'Courier New',monospace;letter-spacing:3px}
 #bloodOverlay{position:absolute;top:0;left:0;width:100%;height:100%;background:radial-gradient(ellipse,transparent 40%,rgba(180,0,0,.6));opacity:0;transition:opacity .4s;pointer-events:none}
-#hitMarker{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#f00;font-size:28px;font-weight:bold;opacity:0;pointer-events:none;text-shadow:0 0 8px #f00}
-#infoTxt{position:absolute;bottom:100px;left:50%;transform:translateX(-50%);color:#ff0;font-size:15px;text-shadow:0 0 8px #ff0;display:none;text-align:center}
-#medkitTxt{position:absolute;bottom:50px;left:20px;color:#0f0;font-size:15px;padding:4px 12px;background:rgba(0,0,0,.6);border-radius:6px;display:none;text-shadow:0 0 6px #0f0}
-#staminaBar{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);width:180px;height:6px;background:rgba(0,0,0,.6);border:1px solid rgba(0,200,255,.4);border-radius:3px;display:none}
-#staminaFill{width:100%;height:100%;background:linear-gradient(90deg,#0af,#0ff);border-radius:2px;transition:width .15s}
+#hitMarker{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#f22;font-size:32px;font-weight:bold;opacity:0;pointer-events:none;text-shadow:0 0 10px #f00,0 0 20px rgba(255,0,0,.3)}
+#infoTxt{position:absolute;bottom:100px;left:50%;transform:translateX(-50%);color:#ffe066;font-size:17px;text-shadow:0 0 10px rgba(255,230,0,.5),0 1px 4px rgba(0,0,0,.8);display:none;text-align:center;padding:8px 20px;background:rgba(0,0,0,.45);border-radius:6px;backdrop-filter:blur(3px)}
+#medkitTxt{position:absolute;bottom:50px;left:20px;color:#0f0;font-size:16px;padding:6px 14px;background:rgba(0,0,0,.65);border:1px solid rgba(0,255,0,.2);border-radius:6px;display:none;text-shadow:0 0 6px #0f0}
+#staminaBar{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);width:200px;height:7px;background:rgba(0,0,0,.7);border:1px solid rgba(0,200,255,.4);border-radius:3px;display:none;box-shadow:0 0 6px rgba(0,180,255,.15)}
+#staminaFill{width:100%;height:100%;background:linear-gradient(90deg,#0af,#0ff);border-radius:2px;transition:width .15s ease-out;box-shadow:0 0 4px rgba(0,220,255,.3)}
 #scopeOverlay{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;display:none;z-index:50}
 #scopeOverlay canvas{width:100%;height:100%}
-#reloadBar{position:absolute;bottom:70px;right:40px;width:120px;height:6px;background:rgba(0,0,0,.6);border:1px solid #0ff;display:none}
-#reloadFill{width:0%;height:100%;background:#0ff}
+#reloadBar{position:absolute;bottom:72px;right:40px;width:130px;height:7px;background:rgba(0,0,0,.7);border:1px solid #0ff;display:none;border-radius:3px;box-shadow:0 0 6px rgba(0,255,255,.15)}
+#reloadFill{width:0%;height:100%;background:linear-gradient(90deg,#08c,#0ff);border-radius:2px;transition:width .05s linear;box-shadow:0 0 4px rgba(0,255,255,.3)}
 .screen{position:absolute;top:0;left:0;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,0,0,.92);z-index:200;pointer-events:auto}
-.screen h1{font-size:46px;margin-bottom:8px;letter-spacing:3px}
-.screen h2{font-size:17px;color:#999;margin-bottom:35px}
+.screen h1{font-size:46px;margin-bottom:10px;letter-spacing:4px}
+.screen h2{font-size:18px;color:#aaa;margin-bottom:30px;letter-spacing:6px}
 .screen p{font-size:15px;max-width:420px;text-align:center;margin-bottom:25px;line-height:1.5}
-.screen button{padding:14px 50px;font-size:18px;background:transparent;border:2px solid;cursor:pointer;text-transform:uppercase;letter-spacing:3px;transition:all .3s;margin:6px}
+.screen button{padding:14px 50px;font-size:18px;background:transparent;border:2px solid;cursor:pointer;text-transform:uppercase;letter-spacing:3px;transition:all .3s;margin:10px;min-width:280px;border-radius:4px;backdrop-filter:blur(4px)}
 #menuScreen h1{color:#f44;text-shadow:0 0 30px #f00}
 #menuScreen button{color:#0f0;border-color:#0f0}
-#menuScreen button:hover{background:#0f0;color:#000;box-shadow:0 0 30px #0f0}
+#menuScreen button:hover{background:#0f0;color:#000;box-shadow:0 0 30px #0f0,0 0 60px rgba(0,255,0,.2)}
 #deathScreen{display:none}
-#deathScreen h1{color:#f00;text-shadow:0 0 25px #f00}
-#deathScreen p{color:#faa}
+#deathScreen h1{color:#f00;text-shadow:0 0 30px #f00,0 0 60px rgba(255,0,0,.2)}
+#deathScreen p{color:#fbb;font-size:16px;line-height:1.6}
 #deathScreen button{color:#f66;border-color:#f66}
-#deathScreen button:hover{background:#f66;color:#000;box-shadow:0 0 25px #f66}
+#deathScreen button:hover{background:#f66;color:#000;box-shadow:0 0 30px #f66,0 0 60px rgba(255,100,100,.2)}
 #winScreen{display:none}
-#winScreen h1{color:#0f0;text-shadow:0 0 30px #0f0}
-#winScreen p{color:#afa;font-size:18px}
+#winScreen h1{color:#0f0;text-shadow:0 0 30px #0f0,0 0 60px rgba(0,255,0,.2)}
+#winScreen p{color:#bfb;font-size:18px;line-height:1.6}
 #winScreen button{color:#0f0;border-color:#0f0}
-#winScreen button:hover{background:#0f0;color:#000;box-shadow:0 0 30px #0f0}
-#minimap{position:absolute;bottom:16px;left:16px;width:140px;height:140px;border:2px solid rgba(0,255,0,.4);background:rgba(0,0,0,.6);image-rendering:pixelated}
+#winScreen button:hover{background:#0f0;color:#000;box-shadow:0 0 30px #0f0,0 0 60px rgba(0,255,0,.2)}
+#minimap{position:absolute;bottom:16px;left:16px;width:150px;height:150px;border:2px solid rgba(0,255,0,.45);background:rgba(0,0,0,.7);image-rendering:pixelated;border-radius:4px;box-shadow:0 0 10px rgba(0,255,0,.1),0 2px 8px rgba(0,0,0,.5)}
 #shopScreen,#tradeScreen{display:none;overflow-y:auto}
-.shopItem{width:140px;padding:12px;border:2px solid #0f0;background:rgba(0,40,0,.5);text-align:center;cursor:pointer;transition:all .3s;pointer-events:auto}
-.shopItem:hover{background:rgba(0,100,0,.5);box-shadow:0 0 15px rgba(0,255,0,.3)}
-.sName{color:#0f0;font-size:14px;margin-bottom:5px}
-.sPrice{color:#ff0;font-size:13px}
-.sDesc{color:#888;font-size:11px;margin-top:3px}
+.shopItem{width:148px;padding:14px 12px;border:2px solid rgba(0,255,0,.5);background:rgba(0,40,0,.45);text-align:center;cursor:pointer;transition:all .3s;pointer-events:auto;border-radius:6px;backdrop-filter:blur(3px)}
+.shopItem:hover{background:rgba(0,100,0,.5);box-shadow:0 0 20px rgba(0,255,0,.3);border-color:#0f0;transform:translateY(-2px)}
+.sName{color:#0f0;font-size:15px;margin-bottom:6px;font-weight:bold;text-shadow:0 0 4px rgba(0,255,0,.3)}
+.sPrice{color:#ffe066;font-size:14px;font-weight:bold}
+.sDesc{color:#aaa;font-size:12px;margin-top:4px;line-height:1.3}
 #helmetOverlay{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;display:none;z-index:10;
   background:
     radial-gradient(ellipse at center,transparent 50%,rgba(0,0,0,0.35) 80%,rgba(0,0,0,0.65) 100%),
@@ -60,45 +60,46 @@ canvas#gl{width:100%;height:100%;display:block}
   border:4px solid rgba(30,40,30,0.35);border-radius:8px;
   box-shadow:inset 0 0 80px rgba(0,0,0,0.3),inset 0 0 20px rgba(20,40,20,0.15)}
 #helmetCrackCanvas{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;display:none;z-index:11}
-#headshotTxt{position:absolute;top:42%;left:50%;transform:translate(-50%,-50%);color:#ff0;font-size:26px;font-weight:bold;opacity:0;pointer-events:none;text-shadow:0 0 12px #ff0,0 0 25px rgba(255,255,0,.5);z-index:60;letter-spacing:3px}
-#jugHud{position:absolute;top:55px;right:20px;color:#fa0;font-size:15px;text-shadow:0 0 8px #fa0;display:none;text-align:right;line-height:1.6}
+#headshotTxt{position:absolute;top:42%;left:50%;transform:translate(-50%,-50%);color:#ff0;font-size:30px;font-weight:bold;opacity:0;pointer-events:none;text-shadow:0 0 12px #ff0,0 0 30px rgba(255,255,0,.5),0 0 50px rgba(255,200,0,.2);z-index:60;letter-spacing:4px}
+#jugHud{position:absolute;top:55px;right:20px;color:#fa0;font-size:16px;text-shadow:0 0 8px #fa0,0 1px 3px rgba(0,0,0,.8);display:none;text-align:right;line-height:1.7;font-family:'Courier New',monospace}
 #bodycamOverlay{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:8}
-#bodycamRec{position:absolute;top:16px;right:16px;font-size:13px;font-family:'Courier New',monospace;color:#f33;text-shadow:0 0 6px rgba(255,0,0,.6);letter-spacing:1px}
+#bodycamRec{position:absolute;top:16px;right:16px;font-size:14px;font-family:'Courier New',monospace;color:#f44;text-shadow:0 0 8px rgba(255,0,0,.6);letter-spacing:2px}
 #bodycamRec .recDot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#f00;margin-right:5px;box-shadow:0 0 6px #f00;animation:recBlink 1s infinite}
 @keyframes recBlink{0%,100%{opacity:1}50%{opacity:0.2}}
-#bodycamTime{position:absolute;bottom:16px;right:16px;font-size:11px;font-family:'Courier New',monospace;color:rgba(255,255,255,.5);text-shadow:0 0 3px rgba(255,255,255,.2);letter-spacing:1px}
-#bodycamId{position:absolute;top:16px;left:16px;font-size:10px;font-family:'Courier New',monospace;color:rgba(255,255,255,.35);text-shadow:0 0 2px rgba(255,255,255,.1);letter-spacing:1px}
+#bodycamTime{position:absolute;bottom:16px;right:16px;font-size:12px;font-family:'Courier New',monospace;color:rgba(255,255,255,.55);text-shadow:0 0 4px rgba(255,255,255,.2);letter-spacing:1px}
+#bodycamId{position:absolute;top:16px;left:16px;font-size:11px;font-family:'Courier New',monospace;color:rgba(255,255,255,.4);text-shadow:0 0 3px rgba(255,255,255,.15);letter-spacing:1px}
 #scanLines{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;
   background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.03) 2px,rgba(0,0,0,0.03) 4px);z-index:9}
 #allyLabels{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:12;overflow:hidden}
-.allyLabel{position:absolute;color:#0f0;font-size:15px;font-family:'Courier New',monospace;text-align:center;text-shadow:0 0 6px #0f0,0 1px 3px rgba(0,0,0,.8);transform:translateX(-50%);white-space:nowrap;font-weight:bold;letter-spacing:1px}
+.allyLabel{position:absolute;color:#0f0;font-size:14px;font-family:'Courier New',monospace;text-align:center;text-shadow:0 0 8px #0f0,0 1px 4px rgba(0,0,0,.9);transform:translateX(-50%);white-space:nowrap;font-weight:bold;letter-spacing:1px}
 .allyLabel.medic{color:#4af;text-shadow:0 0 6px #4af,0 1px 3px rgba(0,0,0,.8)}
 .allyLabel.dumb{color:#f8a;text-shadow:0 0 6px #f8a,0 1px 3px rgba(0,0,0,.8)}
 .allyLabel.dead{color:#888;text-decoration:line-through;font-size:13px}
 .allyLabel.defender{color:#0f0}
-.allyHpBar{width:56px;height:4px;background:rgba(0,0,0,.7);margin:3px auto;border:1px solid rgba(0,255,0,.4);border-radius:2px}
-.allyHpFill{height:100%;background:#0f0;transition:width .3s;border-radius:1px}
+.allyHpBar{width:58px;height:5px;background:rgba(0,0,0,.75);margin:3px auto;border:1px solid rgba(0,255,0,.4);border-radius:2px;box-shadow:0 0 3px rgba(0,0,0,.5)}
+.allyHpFill{height:100%;background:#0f0;transition:width .3s ease-out;border-radius:1px}
 .allyLabel.medic .allyHpBar{border-color:rgba(80,160,255,.4)}
 .allyLabel.medic .allyHpFill{background:#4af}
-.gfxRow{display:flex;align-items:center;gap:10px;margin:4px 0;width:340px;justify-content:space-between}
-.gfxRow label{color:#aaa;font-size:13px;min-width:100px;text-align:left}
-.gfxRow input[type=range]{flex:1;accent-color:#0f0;cursor:pointer}
-.gfxRow .gfxVal{color:#0f0;font-size:13px;min-width:45px;text-align:right;font-family:'Courier New',monospace}
-#droneOverlay{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;display:none;z-index:25;border:3px solid #0f0;box-shadow:inset 0 0 40px rgba(0,255,0,0.2)}
-#droneHud{position:absolute;top:50px;left:50%;transform:translateX(-50%);color:#0f0;font-size:14px;font-family:'Courier New',monospace;text-shadow:0 0 8px #0f0;display:none;z-index:26;text-align:center}
+.gfxRow{display:flex;align-items:center;gap:12px;margin:6px 0;width:360px;justify-content:space-between}
+.gfxRow label{color:#ccc;font-size:14px;min-width:110px;text-align:left}
+.gfxRow input[type=range]{flex:1;accent-color:#0f0;cursor:pointer;height:6px}
+.gfxRow .gfxVal{color:#0f0;font-size:14px;min-width:50px;text-align:right;font-family:'Courier New',monospace;font-weight:bold}
+#droneOverlay{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;display:none;z-index:25;border:3px solid #0f0;box-shadow:inset 0 0 50px rgba(0,255,0,0.15),inset 0 0 120px rgba(0,255,0,0.05)}
+#droneHud{position:absolute;top:50px;left:50%;transform:translateX(-50%);color:#0f0;font-size:15px;font-family:'Courier New',monospace;text-shadow:0 0 8px #0f0,0 1px 3px rgba(0,0,0,.8);display:none;z-index:26;text-align:center}
 #commandWheel{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:220px;height:220px;display:none;z-index:30;pointer-events:auto}
-.cmdOpt{position:absolute;padding:8px 14px;background:rgba(0,0,0,.85);border:1px solid #0f0;color:#0f0;font-size:12px;cursor:pointer;font-family:'Courier New',monospace;text-shadow:0 0 4px #0f0;white-space:nowrap;transition:all .2s}
-.cmdOpt:hover{background:rgba(0,100,0,.5);box-shadow:0 0 10px #0f0}
-#woundHud{position:absolute;top:65px;right:20px;color:#f44;font-size:12px;font-family:'Courier New',monospace;text-shadow:0 0 5px #f00;display:none;line-height:1.5}
-#equipHud{position:absolute;top:42px;left:270px;color:#aaa;font-size:11px;font-family:'Courier New',monospace;display:none;line-height:1.4}
-#zoneWarning{position:absolute;top:15%;left:50%;transform:translateX(-50%);color:#f00;font-size:28px;font-weight:bold;text-shadow:0 0 20px #f00;display:none;animation:zoneFlash 1s infinite;z-index:20}
+.cmdOpt{position:absolute;padding:10px 16px;background:rgba(0,0,0,.88);border:1px solid #0f0;color:#0f0;font-size:13px;cursor:pointer;font-family:'Courier New',monospace;text-shadow:0 0 4px #0f0;white-space:nowrap;transition:all .2s;border-radius:4px;backdrop-filter:blur(3px)}
+.cmdOpt:hover{background:rgba(0,100,0,.5);box-shadow:0 0 15px rgba(0,255,0,.4);border-color:#4f4}
+#woundHud{position:absolute;top:65px;right:20px;color:#f55;font-size:13px;font-family:'Courier New',monospace;text-shadow:0 0 6px #f00,0 1px 3px rgba(0,0,0,.8);display:none;line-height:1.6;padding:4px 8px;background:rgba(40,0,0,.3);border-radius:4px}
+#equipHud{position:absolute;top:46px;left:290px;color:#bbb;font-size:12px;font-family:'Courier New',monospace;display:none;line-height:1.5;text-shadow:0 1px 3px rgba(0,0,0,.8)}
+#zoneWarning{position:absolute;top:15%;left:50%;transform:translateX(-50%);color:#f22;font-size:32px;font-weight:bold;text-shadow:0 0 20px #f00,0 0 40px rgba(255,0,0,.3);display:none;animation:zoneFlash 1s infinite;z-index:20;letter-spacing:3px}
 @keyframes zoneFlash{0%,100%{opacity:1}50%{opacity:.4}}
 #mineIndicator{position:absolute;bottom:55px;left:150px;color:#fa0;font-size:12px;font-family:'Courier New',monospace;display:none;text-shadow:0 0 5px #fa0}
-#weatherHud{position:absolute;top:8px;left:50%;transform:translateX(-50%);color:#adf;font-size:12px;font-family:'Courier New',monospace;display:none;text-shadow:0 0 6px #48f}
+#weatherHud{position:absolute;top:8px;left:50%;transform:translateX(-50%);color:#bbddff;font-size:13px;font-family:'Courier New',monospace;display:none;text-shadow:0 0 6px #48f,0 1px 3px rgba(0,0,0,.8)}
 #mapEditorScreen{display:none;overflow:auto}
 #mapEditorScreen canvas{border:2px solid #0f0;cursor:crosshair;image-rendering:pixelated}
-.edTool{padding:6px 12px;margin:2px;background:rgba(0,40,0,.5);border:1px solid #0f0;color:#0f0;cursor:pointer;font-size:12px;display:inline-block}
-.edTool.active{background:rgba(0,100,0,.5);box-shadow:0 0 8px #0f0}
+.edTool{padding:8px 14px;margin:3px;background:rgba(0,40,0,.5);border:1px solid #0f0;color:#0f0;cursor:pointer;font-size:13px;display:inline-block;border-radius:4px;transition:all .2s}
+.edTool:hover{background:rgba(0,80,0,.5)}
+.edTool.active{background:rgba(0,100,0,.5);box-shadow:0 0 10px #0f0}
 #gravGunHud{position:absolute;bottom:120px;right:40px;color:#af0;font-size:13px;font-family:'Courier New',monospace;display:none;text-shadow:0 0 5px #af0}
 </style>
 </head>
@@ -135,10 +136,10 @@ canvas#gl{width:100%;height:100%;display:block}
   <div id="mathTimer" style="font-size:24px;color:#ff0;margin-top:8px"></div>
  </div>
  <canvas id="screenBloodCanvas" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:15"></canvas>
- <div id="weaponHud" style="position:absolute;bottom:65px;right:40px;color:#aaa;font-size:13px;font-family:'Courier New',monospace;text-shadow:0 0 5px #08f;pointer-events:none"></div>
- <div id="xpHud" style="position:absolute;top:42px;left:20px;pointer-events:none">
-  <div style="width:250px;height:6px;background:rgba(0,0,0,.7);border:1px solid rgba(100,200,255,.4);border-radius:3px"><div id="xpFill" style="width:0%;height:100%;background:linear-gradient(90deg,#08f,#0ff);border-radius:2px;transition:width .3s"></div></div>
-  <span id="xpTxt" style="color:#0ff;font-size:11px;text-shadow:0 0 5px #08f">LV 1 | 0/100 XP</span>
+ <div id="weaponHud" style="position:absolute;bottom:68px;right:40px;color:#bbb;font-size:14px;font-family:'Courier New',monospace;text-shadow:0 0 6px #08f,0 1px 3px rgba(0,0,0,.8);pointer-events:none"></div>
+ <div id="xpHud" style="position:absolute;top:46px;left:20px;pointer-events:none">
+  <div style="width:260px;height:7px;background:rgba(0,0,0,.7);border:1px solid rgba(100,200,255,.4);border-radius:3px;box-shadow:0 0 4px rgba(0,150,255,.1)"><div id="xpFill" style="width:0%;height:100%;background:linear-gradient(90deg,#08f,#0ff);border-radius:2px;transition:width .3s ease-out;box-shadow:0 0 4px rgba(0,200,255,.3)"></div></div>
+  <span id="xpTxt" style="color:#0ff;font-size:12px;text-shadow:0 0 5px #08f,0 1px 2px rgba(0,0,0,.8);font-weight:bold">LV 1 | 0/100 XP</span>
  </div>
  <div id="bulletTimeBar" style="position:absolute;bottom:32px;left:50%;transform:translateX(-50%);width:120px;height:4px;background:rgba(0,0,0,.6);border:1px solid rgba(255,200,0,.4);border-radius:2px;display:none"><div id="bulletTimeFill" style="width:100%;height:100%;background:#fa0;border-radius:1px"></div></div>
  <div id="nightVisionOverlay" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;display:none;z-index:7;background:rgba(0,40,0,0.3);mix-blend-mode:multiply"></div>
@@ -209,11 +210,11 @@ canvas#gl{width:100%;height:100%;display:block}
  </div>
  <button id="btnSettingsBack" style="color:#aaa;border-color:#aaa;margin-top:10px">НАЗАД</button>
 </div>
-<div id="confirmGore" style="display:none;position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.85);z-index:300;pointer-events:auto;flex-direction:column;align-items:center;justify-content:center">
- <div style="border:2px solid #f44;padding:30px 50px;background:rgba(40,0,0,.9);text-align:center;max-width:400px">
-  <p style="color:#f88;font-size:18px;margin-bottom:20px">Вы уверены что хотите это включить?</p>
-  <button id="confirmGoreYes" style="padding:10px 30px;font-size:16px;background:transparent;border:2px solid #f44;color:#f44;cursor:pointer;margin:6px;text-transform:uppercase;letter-spacing:2px">ДА</button>
-  <button id="confirmGoreNo" style="padding:10px 30px;font-size:16px;background:transparent;border:2px solid #aaa;color:#aaa;cursor:pointer;margin:6px;text-transform:uppercase;letter-spacing:2px">НЕТ</button>
+<div id="confirmGore" style="display:none;position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.88);z-index:300;pointer-events:auto;flex-direction:column;align-items:center;justify-content:center">
+ <div style="border:2px solid #f44;padding:35px 55px;background:rgba(40,0,0,.9);text-align:center;max-width:420px;border-radius:8px;box-shadow:0 0 40px rgba(255,50,50,.15)">
+  <p style="color:#f99;font-size:19px;margin-bottom:24px;line-height:1.5">Вы уверены что хотите это включить?</p>
+  <button id="confirmGoreYes" style="padding:12px 36px;font-size:16px;background:transparent;border:2px solid #f44;color:#f44;cursor:pointer;margin:8px;text-transform:uppercase;letter-spacing:2px;border-radius:4px;transition:all .3s">ДА</button>
+  <button id="confirmGoreNo" style="padding:12px 36px;font-size:16px;background:transparent;border:2px solid #aaa;color:#aaa;cursor:pointer;margin:8px;text-transform:uppercase;letter-spacing:2px;border-radius:4px;transition:all .3s">НЕТ</button>
  </div>
 </div>
 <div id="shopScreen" class="screen">
