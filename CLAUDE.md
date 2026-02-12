@@ -38,7 +38,7 @@ node -e "const fs=require('fs');const html=fs.readFileSync('index.html','utf8');
 7. **LEVEL GEOMETRY** (~L686) — VBOs built from MAP grid; `pushQuad()` = 6 verts per face; `cubeVBO` unit cube (L758)
 8. **COLLISION & RAGDOLL** (~L785) — `isWall()`, `collide()`, `lineOfSight()` (grid raymarching), 14-particle Verlet ragdoll with 21 constraints, `boneMat()` (L941), `createRagdoll()` (L876)
 9. **SOUND** (~L969) — Web Audio procedural synthesis `playSound()`, SpeechSynthesis `playVoice()` (L1058) with 6s cooldown
-10. **PARTICLES** (~L1075) — `spawnParticles()`, `spawnDirectionalBlood()` (L1100), giblets, grenades, `updateParticles()`
+10. **PARTICLES** (~L1075) — `spawnParticles()`, grenades, `updateParticles()`
 11. **GAME STATE** (~L1300) — variables, `WEAPONS[]` array (L1327), graphics settings (`gfx*` vars L1353), init functions:
     - `initGame()` (L1540), `initJuggernaut()` (L1584), `initMathMode()` (L1635), `initZombieMode()` (L1691), `initBossMode()` (L1731)
     - `initBattleRoyale()` (L1796), `initWaveDefense()` (L1822)
@@ -55,11 +55,10 @@ node -e "const fs=require('fs');const html=fs.readFileSync('index.html','utf8');
     - `drawParticles()` (L4093), `resetAttribs()` (L4124)
     - `drawWeapon3D()` (L4130) — 5 weapon models with local `boxW()` for gold skin support
     - `drawMinigun()` (L4514), `drawMenuCharacter()` (L4583)
-    - `drawGiblets()` (L4650), `drawBloodPools()` (L4680), `drawBloodDecals()` (L4713)
     - `drawPlayerSkeleton()` (L4766) — 3rd person skeleton player model (cheat mode)
     - `render()` (L4871) — orchestrates all draw calls, inline rendering of grenades/barrels/doors/bombs/mines/cameras
 18. **MINIMAP** (~L5091) — `drawMinimap()`: 2D canvas minimap with enemies, allies, barrels, doors, boss
-19. **HUD** (~L5300) — `updateHUD()`: HP, ammo, objectives, scope overlay, bodycam overlay, mission prompts; `drawScreenBlood()` (L5254)
+19. **HUD** (~L5300) — `updateHUD()`: HP, ammo, objectives, scope overlay, bodycam overlay, mission prompts
 20. **INPUT** (~L5730) — keydown/keyup/mouse/contextmenu event listeners
 21. **GAME CONTROL** (~L5756) — `game` object: `start()`, `startJuggernaut()`, `startMath()`, `startZombie()`, `restart()`, `toMenu()`; shop/trade functions; cheat code system `activateCheat()` (L6016)
 22. **SCREEN EFFECTS** (~L6101) — `drawRain()`, `drawFlashlight()` (L6142)
@@ -90,14 +89,10 @@ limb  = baseM * T(pivot) * RX(swing) * T(offset) * S(size)
 4 presets (low/medium/high/ultra) with individual slider overrides. Key functions: `applyGfxPreset()` (L1364), `resizeGfx()` (L1387), `applyGfxVisuals()` (L1397), `updateGfxUI()` (L1407)
 
 ### Cheat Code System
-`activateCheat(code)` (L6016) — 4 codes entered in settings screen input field (case-insensitive):
-- `BLOOD A NOT 5 YERS OLD A 18 YERS OLD` — unlock gore
+`activateCheat(code)` (L6016) — 3 codes entered in settings screen input field (case-insensitive):
 - `free pls 150` — +150 coins
 - `skelet with black gun plssss` — skeleton mode + 3rd person camera
 - `black world spawn` — teleport to boss arena fight
-
-### Gore System
-Hidden behind cheat code. Directional blood spray, blood→decal conversion, persistent floor/wall decals, blood pools under dead bodies, giblets (tumbling chunks with Verlet), screen blood droplets, dismemberment flags (`headGone`/`armLGone`/etc.), screen shake.
 
 ## Key Technical Gotchas
 
@@ -149,6 +144,6 @@ Hidden behind cheat code. Directional blood spray, blood→decal conversion, per
 | Shift+Ctrl | Slide (while sprinting) |
 
 ## Persistent State (survives between missions)
-`playerCoins`, `playerMedkits`, `weaponBonus`, `armorBonus`, `lootCount`, `playerBags`, `playerCuffs`, `jugUnlocked`, `playerXP`, `playerLevel`, `hasShotgun`, `hasPistol`, `hasSniper`, `hasShield`, `hasBulletTime`, `hasNightVision`, `hasFlashlight`, `goldSkin`, `hasGlitchWeapon`, `bossDefeated`, `skeletonMode`, `thirdPersonCam`, `goreEnabled`, `hasAkimbo`, `hasEquipHelmet`, `hasEquipVest`, `hasEquipKnees`, `playerMines`
+`playerCoins`, `playerMedkits`, `weaponBonus`, `armorBonus`, `lootCount`, `playerBags`, `playerCuffs`, `jugUnlocked`, `playerXP`, `playerLevel`, `hasShotgun`, `hasPistol`, `hasSniper`, `hasShield`, `hasBulletTime`, `hasNightVision`, `hasFlashlight`, `goldSkin`, `hasGlitchWeapon`, `bossDefeated`, `skeletonMode`, `thirdPersonCam`, `hasAkimbo`, `hasEquipHelmet`, `hasEquipVest`, `hasEquipKnees`, `playerMines`
 
 Reset per mission in `initGame()`: `capturedEnemy`, `evacTimer`, `particles`, `helmetCracks`, `allies`, `enemies`, `barrels`, `doors`, `grenades`
