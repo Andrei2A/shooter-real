@@ -253,7 +253,7 @@ canvas#gl{width:100%;height:100%;display:block}
 </div>
 <div id="deathScreen" class="screen">
  <h1>ТЫ ПОГИБ</h1>
- <p>Ты умер от выстрелов, машина уехала и оставила тебя помирать</p>
+ <p>Ты погиб на задании. Миссия провалена.</p>
  <p id="deathKills" style="color:#fa0;font-size:16px;display:none"></p>
  <button id="btnRetry">НАЧАТЬ ЗАНОВО</button>
  <button id="btnDeathMenu" style="color:#aaa;border-color:#aaa">В МЕНЮ</button>
@@ -275,7 +275,7 @@ canvas#gl{width:100%;height:100%;display:block}
   <span class="edTool" data-t="2">Ящик</span>
   <span class="edTool" data-t="3">Враг</span>
   <span class="edTool" data-t="4">Деньги</span>
-  <span class="edTool" data-t="5">Машина</span>
+  <span class="edTool" data-t="5">Выход</span>
   <span class="edTool" data-t="6">Спавн</span>
  </div>
  <canvas id="editorCanvas" width="440" height="340"></canvas>
@@ -320,7 +320,7 @@ const FOG_DIST = 55;
 
 /* ============================================================
    LEVEL MAP
-   0=empty 1=wall 2=crate 3=enemy 4=money 5=car 6=spawn
+   0=empty 1=wall 2=crate 3=enemy 4=money 5=exit 6=spawn
    ============================================================ */
 const MAP = [
 [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
@@ -631,12 +631,18 @@ const texCrate = makeTex(128,128,(ctx,w,h)=>{
   addNoise(ctx,w,h,1000,0.2);
 });
 
-const texCar = makeTex(128,128,(ctx,w,h)=>{
+const texExit = makeTex(128,128,(ctx,w,h)=>{
   ctx.fillStyle='#335';ctx.fillRect(0,0,w,h);
   ctx.fillStyle='#224';ctx.fillRect(10,10,108,108);
   ctx.strokeStyle='#0af';ctx.lineWidth=2;ctx.strokeRect(10,10,108,108);
   ctx.fillStyle='#0af';ctx.font='bold 20px sans-serif';ctx.textAlign='center';ctx.fillText('EXIT',64,70);
   addNoise(ctx,w,h,500,0.15);
+});
+
+const texMoney = makeTex(64,64,(ctx,w,h)=>{
+  ctx.fillStyle='#553';ctx.fillRect(0,0,w,h);
+  ctx.fillStyle='#ff0';ctx.font='bold 36px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('$',32,32);
+  addNoise(ctx,w,h,300,0.15);
 });
 
 // Enemy texture
@@ -674,7 +680,7 @@ const texEnemyDead = makeTex(128,32,(ctx,w,h)=>{
 /* ============================================================
    LEVEL GEOMETRY
    ============================================================ */
-const levelVerts = {wall:[],floor:[],ceil:[],crate:[],car:[]};
+const levelVerts = {wall:[],floor:[],ceil:[],crate:[],exit:[]};
 
 function pushQuad(arr, x0,y0,z0, x1,y1,z1, x2,y2,z2, x3,y3,z3, nx,ny,nz, us,vs){
   // tri 1: 0-1-2, tri 2: 0-2-3
@@ -708,8 +714,8 @@ function buildLevel(){
       // Top face
       pushQuad(arr,wx,h,wz, wx,h,wz+CELL, wx+CELL,h,wz+CELL, wx+CELL,h,wz, 0,1,0,1,1);
     } else if(c===5){
-      // Car marker - draw as special floor
-      pushQuad(levelVerts.car,wx,0.01,wz, wx,0.01,wz+CELL, wx+CELL,0.01,wz+CELL, wx+CELL,0.01,wz, 0,1,0,1,1);
+      // Exit zone marker - draw as special floor
+      pushQuad(levelVerts.exit,wx,0.01,wz, wx,0.01,wz+CELL, wx+CELL,0.01,wz+CELL, wx+CELL,0.01,wz, 0,1,0,1,1);
     }
     // Floor for non-wall cells
     if(c!==1){
@@ -732,12 +738,12 @@ let vboWall=makeVBO(levelVerts.wall);
 let vboFloor=makeVBO(levelVerts.floor);
 let vboCeil=makeVBO(levelVerts.ceil);
 let vboCrate=makeVBO(levelVerts.crate);
-let vboCar=makeVBO(levelVerts.car);
+let vboExit=makeVBO(levelVerts.exit);
 
 function rebuildLevel(){
-  levelVerts.wall.length=0;levelVerts.floor.length=0;levelVerts.ceil.length=0;levelVerts.crate.length=0;levelVerts.car.length=0;
+  levelVerts.wall.length=0;levelVerts.floor.length=0;levelVerts.ceil.length=0;levelVerts.crate.length=0;levelVerts.exit.length=0;
   buildLevel();
-  vboWall=makeVBO(levelVerts.wall);vboFloor=makeVBO(levelVerts.floor);vboCeil=makeVBO(levelVerts.ceil);vboCrate=makeVBO(levelVerts.crate);vboCar=makeVBO(levelVerts.car);
+  vboWall=makeVBO(levelVerts.wall);vboFloor=makeVBO(levelVerts.floor);vboCeil=makeVBO(levelVerts.ceil);vboCrate=makeVBO(levelVerts.crate);vboExit=makeVBO(levelVerts.exit);
 }
 
 // Billboard quad buffer (unit quad)
@@ -1312,9 +1318,7 @@ let equipHelmet=0, equipVest=0, equipKnees=0; // HP left (0=none)
 let hasEquipHelmet=false, hasEquipVest=false, hasEquipKnees=false;
 // 9. Wave Defense
 let wdWave=0, wdPoint={x:0,z:0}, wdWaveTimer=0, wdPointHP=100;
-// 10. Vehicle
-let inVehicle=false, vehicleX=0, vehicleZ=0, vehicleAngle=0, vehicleSpeed=0;
-// 11. Cameras
+// 10. Cameras
 let cameras=[], cameraViewActive=false, cameraViewIndex=0;
 // 12. Gravity gun
 let gravHolding=null, gravDist=3;
@@ -1337,7 +1341,7 @@ function findItems(type){
   return items;
 }
 
-function findCar(){
+function findExit(){
   for(let z=0;z<MAP_H;z++) for(let x=0;x<MAP_W;x++) if(MAP[z][x]===5)
     return {x:x*CELL+CELL/2, z:z*CELL+CELL/2};
   return {x:CELL*7, z:CELL*14};
@@ -1736,46 +1740,6 @@ function updateDrone(dt){
   for(const e of enemies){if(e._droneMarked>0) e._droneMarked-=dt;}
 }
 
-// === VEHICLE FUNCTIONS ===
-function enterVehicle(){
-  if(inVehicle){inVehicle=false;player.x=vehicleX+2;player.z=vehicleZ;const ec=collide(player.x,player.z,PLAYER_R);player.x=ec.x;player.z=ec.z;return;}
-  const car=findCar();
-  const dx=player.x-car.x,dz=player.z-car.z;
-  if(dx*dx+dz*dz<9){
-    inVehicle=true;vehicleX=car.x;vehicleZ=car.z;vehicleAngle=0;vehicleSpeed=0;
-  }
-}
-function updateVehicle(dt){
-  if(!inVehicle) return;
-  // Accelerate/brake
-  if(keys['KeyW']) vehicleSpeed=Math.min(25,vehicleSpeed+15*dt);
-  else if(keys['KeyS']) vehicleSpeed=Math.max(-8,vehicleSpeed-20*dt);
-  else vehicleSpeed*=Math.max(0,1-3*dt);
-  // Steer
-  if(keys['KeyA']) vehicleAngle-=2.5*dt*(Math.abs(vehicleSpeed)>1?1:0);
-  if(keys['KeyD']) vehicleAngle+=2.5*dt*(Math.abs(vehicleSpeed)>1?1:0);
-  // Move with proper collision
-  vehicleX+=Math.sin(vehicleAngle)*vehicleSpeed*dt;
-  vehicleZ+=Math.cos(vehicleAngle)*vehicleSpeed*dt;
-  const vc=collide(vehicleX,vehicleZ,1.2);
-  if(vc.x!==vehicleX||vc.z!==vehicleZ) vehicleSpeed*=-0.3;
-  vehicleX=vc.x;vehicleZ=vc.z;
-  // Player follows vehicle
-  player.x=vehicleX;player.z=vehicleZ;
-  // Run over enemies
-  for(const e of enemies){
-    if(e.hp<=0) continue;
-    const dd=Math.sqrt((e.x-vehicleX)**2+(e.z-vehicleZ)**2);
-    if(dd<2&&Math.abs(vehicleSpeed)>5){
-      e.hp-=Math.abs(vehicleSpeed)*8;
-      if(e.state!=='hurt')e._prevState=e.state;
-      e.state='hurt';e.hurtTimer=0.3;e.flash=1;
-      if(e.hp<=0){e._ragdoll=createRagdoll(e,Math.sin(vehicleAngle),0.5,Math.cos(vehicleAngle),RC);addXP(15);}
-      vehicleSpeed*=0.7;screenShake=0.5;
-    }
-  }
-}
-
 // === WEATHER FUNCTIONS ===
 function updateWeather(dt){
   weatherTimer-=dt;
@@ -2115,13 +2079,6 @@ function updatePlayer(dt){
     if(keys['Digit3']){allyCommandMode='attack';commandWheelOpen=false;document.getElementById('commandWheel').style.display='none';}
     if(keys['Digit4']){allyCommandMode='heal';commandWheelOpen=false;document.getElementById('commandWheel').style.display='none';}
   }
-  // Vehicle entry (F near car when not interacting with other things)
-  if(keys['KeyF']&&!player._vehicleHeld){
-    if(inVehicle){enterVehicle();player._vehicleHeld=true;}
-    else if(!inVehicle){const car=findCar();const cdx2=player.x-car.x,cdz2=player.z-car.z;if(cdx2*cdx2+cdz2*cdz2<9&&!evacActive){enterVehicle();player._vehicleHeld=true;}}
-  }
-  if(!keys['KeyF']) player._vehicleHeld=false;
-  if(inVehicle){updateVehicle(dt);return;}
   // Camera view (hold Tab)
   if(keys['Tab']&&!player._camHeld&&cameras.length>0){
     cameraViewActive=!cameraViewActive;
@@ -2249,7 +2206,7 @@ function updatePlayer(dt){
   if(player.hp<=0){
     player.hp=0;
     state='dead';
-    droneActive=false;inVehicle=false;cameraViewActive=false;
+    droneActive=false;cameraViewActive=false;
     playSound('death');
     playVoice("Mission accomplished, he's dead.");
     document.getElementById('deathScreen').style.display='flex';
@@ -2392,9 +2349,9 @@ function updatePlayer(dt){
     document.getElementById('timerTxt').style.display='block';
     document.getElementById('timerTxt').textContent='ЭВАКУАЦИЯ: '+Math.ceil(evacTimer)+'с';
 
-    // Check if player reached car
-    const car=findCar();
-    const cdx=player.x-car.x, cdz=player.z-car.z;
+    // Check if player reached exit
+    const exit=findExit();
+    const cdx=player.x-exit.x, cdz=player.z-exit.z;
     if(cdx*cdx+cdz*cdz<9){
       state='win';
       playerCoins+=40;
@@ -3312,7 +3269,7 @@ function drawWorld(vpMat){
   drawVBO(vboFloor,texFloor);
   drawVBO(vboCeil,texCeil);
   drawVBO(vboCrate,texCrate);
-  drawVBO(vboCar,texCar);
+  drawVBO(vboExit,texExit);
 }
 
 function drawEnemies(vpMat,viewMat){
@@ -3685,7 +3642,7 @@ function drawEnemies(vpMat,viewMat){
   gl.vertexAttribPointer(billAU,2,gl.FLOAT,false,16,8);
   for(const m of moneyBags){
     if(!m.alive) continue;
-    gl.bindTexture(gl.TEXTURE_2D,texCar);
+    gl.bindTexture(gl.TEXTURE_2D,texMoney);
     gl.uniform3f(billU.uPos,m.x,0,m.z);
     gl.uniform2f(billU.uSize,0.6,0.6);
     gl.uniform1f(billU.uFlash,0);
@@ -4693,13 +4650,6 @@ function drawMinimap(){
     mmctx.beginPath();mmctx.arc(wdPoint.x/CELL*s,wdPoint.z/CELL*s,6,0,Math.PI*2);mmctx.stroke();
     mmctx.fillStyle='rgba(0,255,255,0.15)';mmctx.fill();
   }
-  // Vehicle
-  if(inVehicle){
-    mmctx.fillStyle='#0f0';
-    mmctx.save();mmctx.translate(vehicleX/CELL*s,vehicleZ/CELL*s);mmctx.rotate(vehicleAngle);
-    mmctx.fillRect(-3,-5,6,10);
-    mmctx.restore();
-  }
   // Player
   const px=player.x/CELL*s, pz=player.z/CELL*s;
   mmctx.fillStyle='#0f0';
@@ -4766,14 +4716,14 @@ function updateHUD(){
     else obj+='Враги уничтожены!\n';
     if(moneyLeft>0) obj+=`Найти деньги: ${moneyLeft} осталось\n`;
     else obj+='Деньги собраны!\n';
-    if(evacActive) obj+='Беги к машине (EXIT на миникарте)!';
+    if(evacActive) obj+='Беги к выходу (EXIT на миникарте)!';
     else if(allEnemiesDead&&allMoneyCollected) obj+='Эвакуация начинается...';
     document.getElementById('objTxt').innerText=obj;
   }
 
   // Interaction prompts
-  const car=findCar();
-  const cdx=player.x-car.x, cdz=player.z-car.z;
+  const exit=findExit();
+  const cdx=player.x-exit.x, cdz=player.z-exit.z;
   const info=document.getElementById('infoTxt');
   let prompt='';
   // Bag/cuffs prompts — HIGHEST priority
@@ -4793,7 +4743,7 @@ function updateHUD(){
   }
   if(!prompt){
     if(evacActive && cdx*cdx+cdz*cdz<16){
-      prompt='Подойди ближе к машине для эвакуации!';
+      prompt='Подойди ближе к выходу для эвакуации!';
     } else {
       for(const m of moneyBags){
         if(!m.alive) continue;
@@ -5043,10 +4993,6 @@ function updateHUD(){
     // Show camera view indicator
     document.getElementById('bodycamId').textContent='CAM-'+(cameraViewIndex+1)+' [Tab переключить]';
   }
-  // Vehicle HUD
-  if(inVehicle){
-    document.getElementById('ammoTxt').textContent='ТРАНСПОРТ | '+Math.ceil(Math.abs(vehicleSpeed))+' км/ч | [F] выйти';
-  }
   // Akimbo indicator
   if(akimboActive){
     const s2=status||[];s2.push('AKIMBO');
@@ -5228,7 +5174,7 @@ const game = {
     else if(gameMode==='wavedefense') initWaveDefense();
     else initGame();
     // Reset new feature states
-    droneActive=false;inVehicle=false;cameraViewActive=false;commandWheelOpen=false;
+    droneActive=false;cameraViewActive=false;commandWheelOpen=false;
     woundLeg=false;woundArm=false;woundBleed=false;isSliding=false;wallRunning=false;
     gravHolding=null;mines.length=0;cameras.length=0;weatherType='clear';weatherTimer=20;
     state='playing';
@@ -5238,7 +5184,7 @@ const game = {
     document.getElementById('tradeScreen').style.display='none';
     document.getElementById('timerTxt').style.display='none';
     document.getElementById('bloodOverlay').style.opacity='0';
-    document.getElementById('deathScreen').querySelector('p').textContent='Ты умер от выстрелов, машина уехала и оставила тебя помирать';
+    document.getElementById('deathScreen').querySelector('p').textContent='Ты погиб на задании. Миссия провалена.';
     document.getElementById('deathKills').style.display='none';
     document.getElementById('mathHud').style.display=gameMode==='math'?'block':'none';
     try { canvas.requestPointerLock(); } catch(e){ console.warn('Pointer lock failed:', e); }
@@ -5254,14 +5200,14 @@ const game = {
     document.getElementById('settingsScreen').style.display='none';
     document.getElementById('timerTxt').style.display='none';
     document.getElementById('bloodOverlay').style.opacity='0';
-    document.getElementById('deathScreen').querySelector('p').textContent='Ты умер от выстрелов, машина уехала и оставила тебя помирать';
+    document.getElementById('deathScreen').querySelector('p').textContent='Ты погиб на задании. Миссия провалена.';
     document.getElementById('deathKills').style.display='none';
     document.getElementById('mathHud').style.display='none';
     document.getElementById('nightVisionOverlay').style.display='none';
     document.getElementById('neonOverlay').style.display='none';
     document.getElementById('rainCanvas').style.display='none';
     currentWeapon=0;
-    droneActive=false;inVehicle=false;cameraViewActive=false;commandWheelOpen=false;
+    droneActive=false;cameraViewActive=false;commandWheelOpen=false;
     woundLeg=false;woundArm=false;woundBleed=false;isSliding=false;wallRunning=false;
     gravHolding=null;mines.length=0;cameras.length=0;weatherType='clear';weatherFogMult=1;weatherSpeedMult=1;
     document.getElementById('commandWheel').style.display='none';

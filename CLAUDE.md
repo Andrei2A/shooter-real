@@ -26,7 +26,7 @@ node -e "const fs=require('fs');const html=fs.readFileSync('index.html','utf8');
 
 ### Section Order (match this when adding code)
 1. **CONFIG** (~L304) — constants: `CELL`, `WALL_H`, `MOVE_SPEED`, `BULLET_DMG`, `ENEMY_DMG`, etc.
-2. **MAP** (~L332) — 22x17 grid: 0=empty, 1=wall, 2=crate, 3=enemy, 4=money, 5=car, 6=spawn
+2. **MAP** (~L332) — 22x17 grid: 0=empty, 1=wall, 2=crate, 3=enemy, 4=money, 5=exit, 6=spawn
 3. **GL INIT** (~L357) — WebGL context, canvas setup, `resize()`, early `var _gfxRes` for resolution scaling
 4. **SHADERS** (~L376) — 4 shader programs compiled and linked:
    - `worldProg` (L532): textured + lit + fog via `uFog` uniform (walls/floor/crates)
@@ -50,7 +50,7 @@ node -e "const fs=require('fs');const html=fs.readFileSync('index.html','utf8');
 16. **ALLY AI** (~L3284) — `updateAllies(dt)`: medics heal, defenders fight, dumb wanders; `allyShoot()` (L3493)
 17. **RENDER** (~L3615):
     - `drawHelmetCracks()` (L3615)
-    - `drawWorld()` (L3647) — walls, floor, ceiling, crates, cars
+    - `drawWorld()` (L3647) — walls, floor, ceiling, crates, exit zone
     - `drawEnemies()` (L3675) — enemy/zombie/ally/boss bodies (~20 boxes each), zombie/boss-specific appearance
     - `drawParticles()` (L4093), `resetAttribs()` (L4124)
     - `drawWeapon3D()` (L4130) — 5 weapon models with local `boxW()` for gold skin support
@@ -127,7 +127,7 @@ limb  = baseM * T(pivot) * RX(swing) * T(offset) * S(size)
 | Ctrl | Crouch toggle |
 | Shift | Sprint |
 | Q/E | Lean left/right |
-| F | Interact (loot, heal ally, doors, vehicle, evacuate) |
+| F | Interact (loot, heal ally, doors, evacuate) |
 | G | Capture (bag then cuffs on enemy) |
 | H | Use medkit |
 | 1-6 | Weapon switch (rifle/shotgun/pistol/sniper/glitch/gravgun) |
